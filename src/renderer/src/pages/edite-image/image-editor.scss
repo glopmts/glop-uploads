@@ -1,0 +1,240 @@
+@use "../../scss/globals.scss";
+
+.image-editor {
+  width: 100%;
+  height: 100vh;
+  padding-top: 1rem;
+  position: fixed;
+  background-color: globals.$background-color;
+  color: globals.$hs-colot;
+
+  &__link-header {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+    border-bottom: 2px solid globals.$border-color;
+    display: flex;
+    align-items: center;
+  }
+
+  &__title {
+    margin-left: 15px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  &__link {
+    padding: 5px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: globals.$link;
+    border-radius: globals.$border-radius;
+
+    &:hover {
+      opacity: 0.6;
+      transition-duration: 300ms;
+    }
+  }
+
+  &__icon {
+    color: globals.$hs-colot;
+  }
+
+  &__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100% - 60px);
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  &__select-file {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-width: 2px;
+    width: 348px;
+    height: 180px;
+    border-style: dashed;
+    border-color: globals.$body-color;
+    border-radius: globals.$border-radius;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      opacity: 0.8;
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  &__message {
+    color: globals.$body-color;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__workspace {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    gap: 20px;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+    }
+  }
+
+  &__preview-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: globals.$dark-background-color;
+    border-radius: globals.$border-radius;
+    padding: 20px;
+    overflow: hidden;
+  }
+
+  &__preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  &__controls {
+    width: 100%;
+    max-width: 350px;
+    background-color: globals.$card-bg;
+    border-radius: globals.$border-radius;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+  }
+
+  &__filters,
+  &__adjustments,
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  &__filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  &__filter-btn {
+    background-color: globals.$link;
+    color: globals.$hs-colot;
+    border: none;
+    border-radius: globals.$border-radius;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+
+    &:hover {
+      background-color: globals.$card-hover;
+    }
+
+    &.active {
+      background-color: globals.$primary;
+    }
+  }
+
+  &__slider-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      font-size: 14px;
+      color: globals.$muted-color;
+    }
+  }
+
+  &__slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 5px;
+    background: globals.$dark-background-color;
+    outline: none;
+
+    &::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: globals.$primary;
+      cursor: pointer;
+    }
+
+    &::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: globals.$primary;
+      cursor: pointer;
+      border: none;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+  }
+
+  &__btn {
+    padding: 10px 15px;
+    border-radius: globals.$border-radius;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &--primary {
+      background-color: globals.$primary;
+      color: white;
+
+      &:hover {
+        background-color: globals.$primary, 10%;
+      }
+    }
+
+    &--secondary {
+      background-color: globals.$link;
+      color: globals.$hs-colot;
+
+      &:hover {
+        background-color: globals.$card-hover;
+      }
+    }
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: globals.$hs-colot;
+  }
+}

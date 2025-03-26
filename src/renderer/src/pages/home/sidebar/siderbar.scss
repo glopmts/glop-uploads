@@ -1,0 +1,74 @@
+@use "../../../scss/globals.scss";
+
+.sidebar {
+  background-color: globals.$dark-background-color;
+  color: globals.$muted-color;
+  flex-direction: column;
+  display: flex;
+  transition: opacity ease 0.2s;
+  border-right: solid 1px globals.$border-color;
+  position: relative;
+  overflow: hidden;
+  padding-top: globals.$spacing-unit;
+  width: 220px;
+  height: 100%;
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+  }
+
+  &__menu-item {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+
+    &--active {
+      .sidebar__menu-item-button {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: globals.$hs-colot;
+      }
+    }
+  }
+
+  &__menu-item-button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: globals.$spacing-unit * 1.5;
+    background: none;
+    border: none;
+    color: globals.$muted-color;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.2s, color 0.2s;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  &__menu-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: globals.$spacing-unit;
+
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &__menu-item-text {
+    font-size: globals.$body-font-size;
+  }
+}

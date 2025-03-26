@@ -1,0 +1,65 @@
+$background-color: #1c1c1c;
+$dark-background-color: #151515;
+
+$muted-color: #c0c1c7;
+$body-color: #8e919b;
+$hs-colot: #ffff;
+
+$success-color: #1c9749;
+$danger-color: #801d1e;
+$warning-color: #ffc107;
+
+$disabled-opacity: 0.5;
+$active-opacity: 0.7;
+
+$spacing-unit: 8px;
+
+$toast-z-index: 5;
+$bottom-panel-z-index: 3;
+$title-bar-z-index: 4;
+$backdrop-z-index: 4;
+$modal-z-index: 5;
+
+$body-font-size: 14px;
+$small-font-size: 12px;
+
+$app-container: app-container;
+
+$primary: #6200ee;
+$secondary: #03dac6;
+$text-primary: #212121;
+$text-secondary: #757575;
+$card-bg: #27272a;
+$border-color: #27272a;
+$card-hover: #3f3f46;
+$link: #3f3f46;
+
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+
+$font-size-sm: 12px;
+$font-size-md: 14px;
+$font-size-lg: 18px;
+
+$border-radius: 8px;
+
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+$shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+
+body {
+  background-color: $background-color;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  font-family: "Inter", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $hs-colot;
+}
