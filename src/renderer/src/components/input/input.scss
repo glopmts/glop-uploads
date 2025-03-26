@@ -1,0 +1,10 @@
+@use "../../scss/globals.scss";
+
+
+.input-props {
+  padding: 10px;
+  width: 100%;
+  border-radius: globals.$border-radius;
+  background: globals.$input-bg;
+  color: globals.$text-secondary;
+}

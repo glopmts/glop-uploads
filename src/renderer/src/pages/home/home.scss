@@ -5,6 +5,7 @@
     width: 100%;
     height: 100dvh;
     padding: 0;
+    position: fixed;
     display: flex;
     background-color: globals.$background-color;
     color: globals.$body-color;
@@ -26,5 +27,6 @@
     flex: 1;
     padding: globals.$spacing-unit * 2;
     overflow: auto;
+    width: 100%;
   }
 }

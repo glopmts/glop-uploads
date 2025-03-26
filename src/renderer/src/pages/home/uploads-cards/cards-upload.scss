@@ -1,0 +1,9 @@
+@use "../../../scss/globals.scss";
+
+.file-manager {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: globals.$background-color;
+  color: globals.$muted-color;
+}

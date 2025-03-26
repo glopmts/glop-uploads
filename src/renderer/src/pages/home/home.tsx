@@ -1,8 +1,8 @@
-import ImagesSavesEdits from "@renderer/components/newsProject/editeImage"
 import type { FC } from "react"
 import "./Home.scss"
 import Sidebar from "./sidebar/siderbar"
 import "./sidebar/siderbar.scss"
+import CardsUpload from "./uploads-cards/cards-upload"
 
 const Home: FC = () => (
   <section className="home__content">
@@ -12,7 +12,7 @@ const Home: FC = () => (
         <h1>Bem vindo(a)</h1>
       </header>
       <div className="home__body">
-        <ImagesSavesEdits />
+        <CardsUpload />
       </div>
     </main>
   </section>

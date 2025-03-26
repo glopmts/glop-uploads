@@ -29,10 +29,15 @@ $primary: #6200ee;
 $secondary: #03dac6;
 $text-primary: #212121;
 $text-secondary: #757575;
+
 $card-bg: #27272a;
-$border-color: #27272a;
 $card-hover: #3f3f46;
+
+$border-color: #27272a;
+
 $link: #3f3f46;
+
+$input-bg: #1c1c1c;
 
 $spacing-sm: 8px;
 $spacing-md: 16px;
@@ -49,9 +54,11 @@ $shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
 
 body {
   background-color: $background-color;
+  width: 100%;
   margin: 0;
   padding: 0;
   top: 0;
+  bottom: 0;
   font-family: "Inter", sans-serif;
 }
 
