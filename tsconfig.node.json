@@ -4,7 +4,9 @@
     "electron.vite.config.*",
     "src/main/**/*",
     "src/preload/**/*",
-    "src/renderer/hooks"
+    "src/renderer/hooks",
+    "src/global.d.ts",
+    "src/renderer/lib"
   ],
   "compilerOptions": {
     "composite": true,

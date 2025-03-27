@@ -1,0 +1,100 @@
+@use "../../scss/globals.scss" as g;
+
+.menu-folders {
+  &__container {
+    position: fixed;
+    z-index: 1000;
+    min-width: 200px;
+    background-color: g.$card-bg;
+    border-radius: g.$border-radius;
+    box-shadow: g.$shadow-md;
+    overflow: hidden;
+    animation: menu-appear 0.15s ease-out;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    padding: g.$spacing-sm g.$spacing-md;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    color: g.$hs-colot;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: g.$card-hover;
+    }
+
+    &--danger {
+      color: g.$danger-color;
+
+      &:hover {
+        background-color: rgba(g.$danger-color, 0.1);
+      }
+    }
+  }
+
+  &__icon {
+    margin-right: g.$spacing-sm;
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    // Icons for the menu items
+    &--folder-open::before {
+      content: "📂";
+    }
+
+    &--pencil::before {
+      content: "✏️";
+    }
+
+    &--copy::before {
+      content: "📋";
+    }
+
+    &--scissors::before {
+      content: "✂️";
+    }
+
+    &--trash::before {
+      content: "🗑️";
+    }
+
+    &--info::before {
+      content: "ℹ️";
+    }
+  }
+
+  &__label {
+    font-size: g.$font-size-sm;
+  }
+
+  &__divider {
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 0;
+  }
+}
+
+@keyframes menu-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

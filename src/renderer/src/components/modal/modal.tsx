@@ -30,7 +30,6 @@ export function Modal({
   const [isClosing, setIsClosing] = useState(false);
   const modalContentRef = useRef<HTMLDivElement | null>(null);
 
-
   const handleCloseClick = useCallback(() => {
     setIsClosing(true);
     const zero = performance.now();

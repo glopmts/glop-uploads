@@ -1,0 +1,1 @@
+export const token_api = process.env.TOKEN_API!

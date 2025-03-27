@@ -11,5 +11,9 @@
     {
       "path": "./tsconfig.web.json"
     }
+  ],
+  "include": [
+    "src",
+    "electron.d.ts" // ou o nome do arquivo que você usou
   ]
 }

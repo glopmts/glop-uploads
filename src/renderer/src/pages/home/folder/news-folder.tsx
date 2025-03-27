@@ -1,5 +1,4 @@
 import { FoldIcon } from "@primer/octicons-react";
-import { Backdrop } from "@renderer/components/backdrop/backdrop";
 import { Button } from "@renderer/components/button/button";
 import { Input } from "@renderer/components/input/input";
 import { Modal } from "@renderer/components/modal/modal";
@@ -40,36 +39,34 @@ const NewsFolder: FC = () => {
         </Button>
       </div>
       {isTrueModal && (
-        <Backdrop>
-          <Modal title="Novo Pasta" onClose={() => setTrueModal(false)} visible={isTrueModal}>
-            <div className="news-folder__itens-content">
-              <div className="news-folder__itens">
-                <label>Titulo Pasta</label>
-                <Input placeholder="titulo pasta" type="text" value={title} onChange={onChange} />
-              </div>
-              <label>Selecione um type</label>
-              <select className="news-upload__select" value={selectedType} onChange={handleTypeChange}>
-                {itemTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1)}
-                  </option>
-                ))}
-              </select>
-              <div className="news-folder__itens">
-                <label>Cor Pasata (opcional)</label>
-                <Input placeholder="Cor" className="news-folder__input-color" type="color" value={color} onChange={onChangeColor} style={{
-                  background: color
-                }} />
-              </div>
+        <Modal title="Novo Pasta" onClose={() => setTrueModal(false)} visible={isTrueModal}>
+          <div className="news-folder__itens-content">
+            <div className="news-folder__itens">
+              <label>Titulo Pasta</label>
+              <Input placeholder="titulo pasta" type="text" value={title} onChange={onChange} />
             </div>
-            <div className="news-upload__modal-actions">
-              <Button onClick={() => setTrueModal(false)} className="news-upload__cancel-button">
-                Cancelar
-              </Button>
-              <Button theme="primary" onClick={handleSubmit}>Confirmar</Button>
+            <label>Selecione um type</label>
+            <select className="news-upload__select" value={selectedType} onChange={handleTypeChange}>
+              {itemTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </option>
+              ))}
+            </select>
+            <div className="news-folder__itens">
+              <label>Cor Pasata (opcional)</label>
+              <Input placeholder="Cor" className="news-folder__input-color" type="color" value={color} onChange={onChangeColor} style={{
+                background: color
+              }} />
             </div>
-          </Modal>
-        </Backdrop>
+          </div>
+          <div className="news-upload__modal-actions">
+            <Button onClick={() => setTrueModal(false)} className="news-upload__cancel-button">
+              Cancelar
+            </Button>
+            <Button theme="primary" onClick={handleSubmit}>Confirmar</Button>
+          </div>
+        </Modal>
       )}
     </section>
   );
