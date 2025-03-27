@@ -1,8 +1,8 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
+import fetch from 'node-fetch';
 import { join } from "path";
 import icon from "../../resources/icon.png?asset";
-
 
 function createWindow(): void {
   // Create the browser window.
@@ -30,6 +30,23 @@ function createWindow(): void {
     shell.openExternal(details.url);
     return { action: "deny" };
   });
+
+  ipcMain.handle('fetch-data', async (event, url: string) => {
+    try {
+      const response = await fetch(url);
+      return {
+        ok: response.ok,
+        status: response.status,
+        json: await response.json()
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        return { error: error.message };
+      }
+      return { error: "An unknown error occurred" };
+    }
+  });
+
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.

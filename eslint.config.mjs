@@ -24,6 +24,7 @@ export default tseslint.config(
     rules: {
       ...eslintPluginReactHooks.configs.recommended.rules,
       ...eslintPluginReactRefresh.configs.vite.rules,
+       "@typescript-eslint/explicit-function-return-type": "off"
     },
   }
 );

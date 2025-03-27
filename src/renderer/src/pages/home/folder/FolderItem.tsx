@@ -34,7 +34,7 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
   }
 
   const handleNavigate = (id: string) => {
-    navigate({ pathname: "/itens", search: `?id=${id}` });
+    navigate({ pathname: "/items", search: `?id=${id}` });
   }
 
   return (

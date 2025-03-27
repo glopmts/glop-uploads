@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { FoldIcon } from "@primer/octicons-react";
 import { Backdrop } from "@renderer/components/backdrop/backdrop";
 import { Button } from "@renderer/components/button/button";
@@ -42,7 +41,7 @@ const NewsFolder: FC = () => {
       </div>
       {isTrueModal && (
         <Backdrop>
-          <Modal title="Novo upload" onClose={() => setTrueModal(false)} visible={isTrueModal}>
+          <Modal title="Novo Pasta" onClose={() => setTrueModal(false)} visible={isTrueModal}>
             <div className="news-folder__itens-content">
               <div className="news-folder__itens">
                 <label>Titulo Pasta</label>

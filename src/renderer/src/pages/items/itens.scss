@@ -1,0 +1,175 @@
+@use "../../scss/globals.scss" as g;
+
+.itens-id {
+  &__container {
+    background-color: g.$background-color;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  &__infor-details {
+    width: 80%;
+    padding: 10px;
+  }
+
+  &__ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: g.$spacing-md;
+    align-items: start;
+    justify-content: space-between;
+    list-style: none;
+    padding: 0;
+  }
+
+  &__card {
+    width: 180px;
+    height: 140px;
+    padding: 8px;
+    border-width: 1px;
+    border-radius: g.$border-radius-lg;
+    border-color: g.$border-color;
+    background-color: g.$card-bg;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      background-color: g.$card-hover;
+    }
+
+    .item-preview-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      .item-title {
+        margin-top: auto;
+        padding-top: 8px;
+        font-size: g.$font-size-sm;
+        color: g.$hs-colot;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: center;
+      }
+    }
+
+    .item-preview {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: g.$border-radius-md;
+    }
+
+    .video-preview {
+      width: 100%;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      border-radius: g.$border-radius-md;
+      overflow: hidden;
+
+      .play-icon {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        z-index: 300;
+        border-radius: g.$border-radius-md;
+        color: g.$hs-colot;
+        background-color: rgba(0, 0, 0, 0.3);
+        font-size: 24px;
+        transition: background-color 0.2s;
+      }
+
+      &:hover .play-icon {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    .document-preview,
+    .audio-preview,
+    .file-preview {
+      width: 100%;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: g.$card-bg;
+      border-radius: g.$border-radius-md;
+
+      .document-icon,
+      .audio-icon,
+      .file-icon {
+        font-size: 36px;
+      }
+    }
+
+    .document-preview {
+      background-color: rgba(37, 99, 235, 0.1);
+    }
+
+    .audio-preview {
+      background-color: rgba(147, 51, 234, 0.1);
+    }
+
+    .file-preview {
+      background-color: rgba(245, 158, 11, 0.1);
+    }
+  }
+
+  &__not-found {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__text-not {
+    font-size: g.$font-size-lg;
+  }
+}
+
+
+.context-menu {
+  position: absolute;
+  background: #333;
+  color: white;
+  border-radius: 5px;
+  padding: 8px 0;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  min-width: 150px;
+}
+
+.context-menu button {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: white;
+  text-align: left;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.context-menu button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}

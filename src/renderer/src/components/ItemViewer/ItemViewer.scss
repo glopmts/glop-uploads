@@ -1,0 +1,190 @@
+@use "../../scss/globals.scss" as g;
+
+.item-viewer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.2s ease-in-out;
+  outline: none;
+}
+
+.item-viewer-container {
+  width: 90%;
+  height: 90%;
+  max-width: 1200px;
+  background-color: g.$dark-background-color;
+  border-radius: g.$border-radius-lg;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: scaleIn 0.2s ease-in-out;
+}
+
+.viewer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: g.$spacing-md;
+  background-color: g.$card-bg;
+  border-bottom: 1px solid g.$border-color;
+
+  h3 {
+    margin: 0;
+    color: g.$hs-colot;
+    font-size: g.$font-size-lg;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .close-button {
+    background: none;
+    border: none;
+    color: g.$muted-color;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: g.$border-radius-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    &:hover {
+      background-color: g.$card-hover;
+      color: g.$hs-colot;
+    }
+  }
+}
+
+.viewer-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  position: relative;
+  background-color: g.$background-color;
+
+  img,
+  video,
+  iframe {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .audio-container {
+    background-color: g.$card-bg;
+    padding: g.$spacing-lg;
+    border-radius: g.$border-radius-lg;
+    width: 80%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: g.$spacing-md;
+
+    .audio-title {
+      font-size: g.$font-size-lg;
+      color: g.$hs-colot;
+      margin-bottom: g.$spacing-md;
+    }
+
+    audio {
+      width: 100%;
+    }
+  }
+
+  .unknown-message {
+    text-align: center;
+    color: g.$muted-color;
+    padding: g.$spacing-lg;
+
+    .file-icon {
+      font-size: 48px;
+      margin-bottom: g.$spacing-md;
+    }
+
+    .file-details {
+      margin-top: g.$spacing-md;
+      font-size: g.$font-size-sm;
+      color: g.$body-color;
+    }
+  }
+}
+
+.viewer-footer {
+  padding: g.$spacing-md;
+  background-color: g.$card-bg;
+  border-top: 1px solid g.$border-color;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .item-details {
+    display: flex;
+    gap: g.$spacing-lg;
+    color: g.$muted-color;
+    font-size: g.$font-size-sm;
+  }
+}
+
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  border: 3px solid g.$border-color;
+  border-top: 3px solid g.$primary;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
