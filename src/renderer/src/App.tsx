@@ -1,13 +1,17 @@
-import { Route, HashRouter as Router, Routes } from "react-router-dom";
-import Home from "./pages/home/home";
+import { Outlet } from "react-router-dom";
+import "./app.scss";
+import Sidebar from "./pages/home/sidebar/siderbar";
 
 function App(): JSX.Element {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </Router>
+    <main>
+      <Sidebar />
+      <article className="container">
+        <section className="container__content">
+          <Outlet />
+        </section>
+      </article>
+    </main>
   );
 }
 

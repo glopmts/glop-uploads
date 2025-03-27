@@ -1,0 +1,37 @@
+@use "../../../scss/globals.scss" as g;
+
+.news-folder {
+  width: 100%;
+  position: relative;
+
+  &__container {
+    width: 100%;
+  }
+
+  &__button-active {
+    width: 100%;
+  }
+
+  &__itens-content {
+    display: flex;
+    flex-direction: column;
+    gap: g.$spacing-md;
+  }
+
+  &__itens {
+    display: flex;
+    flex-direction: column;
+    gap: g.$spacing-sm;
+
+    label {
+      color: g.$hs-colot;
+    }
+  }
+
+  &__input-color {
+    width: 10%;
+    height: 20%;
+    cursor: pointer;
+    border-radius: g.$border-radius-lg;
+  }
+}

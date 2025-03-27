@@ -1,10 +1,47 @@
-@use "../../scss/globals.scss";
+@use "../../scss/globals.scss" as g;
 
+.input {
+  &-root {
+    width: 100%;
+    position: relative;
+  }
 
-.input-props {
-  padding: 10px;
-  width: 100%;
-  border-radius: globals.$border-radius;
-  background: globals.$input-bg;
-  color: globals.$text-secondary;
+  &-element {
+    padding: 0.75rem 1rem;
+    width: 100%;
+    border-radius: g.$border-radius;
+    background: g.$input-bg;
+    color: g.$hs-colot;
+    border: 1px solid g.$input-border;
+    font-size: 1rem;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:focus {
+      outline: none;
+      border-color: g.$primary-color;
+      box-shadow: 0 0 0 2px rgba(g.$primary-color, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &::placeholder {
+      color: g.$text-tertiary;
+      opacity: 1;
+    }
+
+    &.error {
+      border-color: g.$error-color;
+    }
+  }
+
+  &-error {
+    color: g.$error-color;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
 }

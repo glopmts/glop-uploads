@@ -1,0 +1,45 @@
+@use "../../scss/globals.scss" as g;
+
+.itens-id {
+  &__container {
+    background-color: g.$background-color;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+
+  &__infor-details {
+    width: 80%;
+    padding: 10px;
+  }
+
+  &__ul {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: g.$spacing-md;
+    align-items: center;
+    justify-content: space-between;
+    list-style: none;
+
+  }
+
+  &__card {
+    padding: 5px;
+    height: 100;
+    border-width: 2px g.$card-bg;
+
+    .item-preview {
+      width: 80%;
+      object-fit: cover;
+      border-radius: g.$border-radius-lg;
+    }
+  }
+
+
+}

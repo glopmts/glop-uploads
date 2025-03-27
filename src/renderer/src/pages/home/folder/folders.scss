@@ -1,0 +1,84 @@
+@use "../../../scss/globals.scss" as g;
+
+.folders {
+  &__container {
+    width: 100%;
+    padding-top: g.$spacing-lg;
+  }
+
+  &__h3 {
+    color: g.$hs-colot;
+    margin-bottom: g.$spacing-md;
+    font-size: g.$font-size-lg;
+  }
+
+  &__container-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: g.$spacing-md;
+  }
+}
+
+.folder-item {
+  &__container {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    border-radius: g.$border-radius;
+    padding: g.$spacing-md;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    box-shadow: g.$shadow-sm;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: g.$shadow-md;
+    }
+  }
+
+  &__tab {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    width: 40%;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 0 0 4px 4px;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    color: white;
+  }
+
+  &__title {
+    font-weight: bold;
+    font-size: g.$font-size-md;
+    margin-top: g.$spacing-sm;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__info {
+    font-size: g.$font-size-sm;
+    opacity: 0.8;
+    margin-top: g.$spacing-sm;
+  }
+
+  &__icon {
+    position: absolute;
+    bottom: g.$spacing-md;
+    left: g.$spacing-md;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

@@ -4,7 +4,7 @@ export interface CardItem {
   id: string
   title: string
   type: ItemType
-  path: string
+  path?: string
   thumbnail?: string
   size?: string
   createdAt: Date
@@ -15,6 +15,7 @@ export interface Folder {
   id: string
   title: string
   type: ItemType
+  color?: string;
   items: CardItem[]
   createdAt: Date
   updatedAt: Date

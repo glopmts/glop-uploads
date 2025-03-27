@@ -1,0 +1,72 @@
+@use "../../../scss/globals.scss" as g;
+
+.news-upload {
+  width: 100%;
+  position: relative;
+
+  &__container {
+    width: 100%;
+  }
+
+  &__button-active {
+    display: flex;
+    justify-content: end;
+    align-items: end;
+    width: 100%;
+  }
+
+  &__modal-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: g.$spacing-sm;
+  }
+
+  &__modal-itens {
+    display: flex;
+    flex-direction: column;
+    gap: g.$spacing-sm;
+
+    label {
+      font-size: g.$font-size-md;
+      color: g.$hs-colot;
+    }
+  }
+
+  &__select {
+    background-color: g.$input-bg;
+    border: 1px solid g.$input-border;
+    border-radius: g.$border-radius;
+    color: g.$hs-colot;
+    font-size: g.$font-size-md;
+    padding: g.$spacing-sm;
+    outline: none;
+    width: 100%;
+
+    &:focus {
+      border-color: g.$primary;
+    }
+
+    option {
+      background-color: g.$dark-background-color;
+      color: g.$hs-colot;
+    }
+  }
+
+  &__modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: g.$spacing-md;
+    margin-top: g.$spacing-md;
+  }
+
+  &__cancel-button {
+    background-color: transparent;
+    border: 1px solid g.$input-border;
+    color: g.$hs-colot;
+
+    &:hover {
+      background-color: g.$card-hover;
+    }
+  }
+}
