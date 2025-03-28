@@ -24,7 +24,7 @@ const MenuFolder = ({ onClose, position, folderId, folderTitle, options, editeMe
   const navigate = useNavigate();
 
   const handleNavigate = (id: string) => {
-    navigate({ pathname: "/items", search: `?id=${id}` });
+    navigate({ pathname: "/folder", search: `?id=${id}` });
   }
 
   // Default menu options if none provided

@@ -1,14 +1,15 @@
 import { Button } from "@renderer/components/button/button";
 import { Input } from "@renderer/components/input/input";
-import MenuFolder from "@renderer/components/menu-folrders/menu-folders";
 import { Modal } from "@renderer/components/modal/modal";
 import type { Folder, ItemType } from "@renderer/types/interfaces";
 import { useCallback, useMemo, useState, type FC } from "react";
-import { File, FileText, Image, Music, Video } from "react-feather";
+import { File, FileText, Folder as FolderIcon, Image, Music, Video } from "react-feather";
 import { useNavigate } from "react-router-dom";
+import MenuFolder from "../../../components/folders/menu-folrders/menu-folders";
 
 interface FolderItemProps {
   folder: Folder;
+  onAddSubfolder?: () => void
 }
 
 const itemTypes: ItemType[] = ["file", "image", "video", "audio", "document"];
@@ -16,6 +17,7 @@ const itemTypes: ItemType[] = ["file", "image", "video", "audio", "document"];
 // Função auxiliar para renderizar ícone
 const getIconByType = (type: ItemType) => {
   const icons: Record<ItemType, JSX.Element> = {
+    folder: <FolderIcon size={18} />,
     file: <File size={18} />,
     image: <Image size={18} />,
     video: <Video size={18} />,
@@ -67,7 +69,7 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
   }, []);
 
   const handleNavigate = useCallback(() => {
-    navigate({ pathname: "/items", search: `?id=${folder.id}&name=${folder.title}` });
+    navigate({ pathname: "/folder", search: `?id=${folder.id}&name=${folder.title}` });
   }, [navigate, folder.id, folder.title]);
 
   const folderStyle = useMemo(() => ({ backgroundColor: folder.color || "#27272a" }), [folder.color]);

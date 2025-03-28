@@ -1,4 +1,4 @@
-export type ItemType = "image" | "file" | "video" | "audio" | "document"
+export type ItemType = "image" | "file" | "video" | "audio" | "document" | "folder"
 
 export interface CardItem {
   id: string
@@ -11,12 +11,13 @@ export interface CardItem {
   updatedAt: Date
 }
 
-export interface Folder {
+export interface Folder extends CardItem {
   id: string
   title: string
   type: ItemType
-  color?: string;
-  items: CardItem[]
+  color?: string
+  items: (CardItem | Folder)[]
   createdAt: Date
   updatedAt: Date
+  isFolder?: boolean 
 }

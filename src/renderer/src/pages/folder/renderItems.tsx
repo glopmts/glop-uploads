@@ -1,6 +1,16 @@
 import { CardItem } from "@renderer/types/interfaces"
 
 export const renderItemPreview = (item: CardItem) => {
+  if (item.type === "folder") {
+    return (
+      <div className="item-preview-container folder">
+        <div className="folder-preview">
+          <i className="fa fa-folder" />
+        </div>
+        <div className="item-title">{item.title}</div>
+      </div>
+    )
+  }
   switch (item.type) {
     case "image":
       return (

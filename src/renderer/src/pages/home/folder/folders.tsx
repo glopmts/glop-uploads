@@ -1,167 +1,178 @@
-import MenuFolder from "@renderer/components/menu-folrders/menu-folders"
-import type { Folder } from "@renderer/types/interfaces"
-import { useState, type FC } from "react"
-import FolderItem from "./FolderItem"
-import "./folders.scss"
+import MenuFolder from "@renderer/components/folders/menu-folrders/menu-folders";
+import NewsFolderMenu from "@renderer/components/folders/news-folder-menu/news-folder-menu";
+import type { CardItem, Folder, ItemType } from "@renderer/types/interfaces";
+import { useState, type FC } from "react";
+import FolderItem from "./FolderItem";
+import "./folders.scss";
 
-const pastas: Folder[] = [
-  {
-    id: "pasta1",
-    title: "Images",
-    color: "#dc2626",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    items: [
-      {
-        id: "pages",
-        title: "Exemples",
-        type: "image",
-        path: "",
-        size: "20mb",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
-    type: "image",
-  },
-  {
-    id: "pasta2",
-    title: "Documents",
-    color: "#2563eb",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    items: [
-      {
-        id: "doc1",
-        title: "Report",
-        type: "document",
-        path: "",
-        size: "5mb",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
-    type: "document",
-  },
-  {
-    id: "pasta3",
-    title: "Videos",
-    color: "#16a34a",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    items: [
-      {
-        id: "vid1",
-        title: "Tutorial",
-        type: "video",
-        path: "",
-        size: "150mb",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
-    type: "video",
-  },
-  {
-    id: "pasta4",
-    title: "Audio",
-    color: "#9333ea",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    items: [
-      {
-        id: "aud1",
-        title: "Podcast",
-        type: "audio",
-        path: "",
-        size: "45mb",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
-    type: "audio",
-  },
-
-  {
-    id: "pasta5",
-    title: "Audio",
-    color: "",
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    items: [
-      {
-        id: "aud1",
-        title: "Podcast",
-        type: "audio",
-        path: "",
-        size: "45mb",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
-    type: "audio",
-  },
-]
+const itemTypes: ItemType[] = ["image", "document", "video", "audio", "folder"];
 
 const UserFolders: FC = () => {
-  const [sectionContextMenu, setSectionContextMenu] = useState<{ x: number; y: number } | null>(null)
+  const [sectionContextMenu, setSectionContextMenu] = useState<{ x: number; y: number } | null>(null);
+  const [contextMenuFolderId, setContextMenuFolderId] = useState<string | null>(null);
+  const [folders, setFolders] = useState<Folder[]>([]);
+
+  const [isFolderModalOpen, setIsFolderModalOpen] = useState(false);
+  const [newFolderData, setNewFolderData] = useState({
+    title: "",
+    type: "folder" as ItemType,
+    color: "#3b82f6",
+    parentId: null as string | null,
+  });
 
   const handleSectionContextMenu = (e: React.MouseEvent) => {
     if (
       (e.target as HTMLElement).className === "folders__container-items" ||
       (e.target as HTMLElement).className === "folders__container"
     ) {
-      e.preventDefault()
-      setSectionContextMenu({ x: e.clientX, y: e.clientY })
+      e.preventDefault();
+      setContextMenuFolderId(null);
+      setSectionContextMenu({ x: e.clientX, y: e.clientY });
     }
-  }
+  };
+
+  const handleFolderContextMenu = (e: React.MouseEvent, folderId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenuFolderId(folderId);
+    setSectionContextMenu({ x: e.clientX, y: e.clientY });
+  };
 
   const closeSectionContextMenu = () => {
-    setSectionContextMenu(null)
-  }
+    setSectionContextMenu(null);
+  };
+
+  const openFolderModal = (parentId: string | null = null) => {
+    setNewFolderData({
+      title: "",
+      type: "folder",
+      color: "#" + Math.floor(Math.random() * 16777215).toString(16),
+      parentId,
+    });
+    setIsFolderModalOpen(true);
+    closeSectionContextMenu();
+  };
+
+  const handleCreateFolder = () => {
+    if (!newFolderData.title.trim()) return;
+
+    const newFolder: Folder = {
+      id: `folder-${Date.now()}`,
+      title: newFolderData.title,
+      type: newFolderData.type,
+      color: newFolderData.color,
+      items: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      isFolder: true,
+    };
+
+    if (newFolderData.parentId) {
+      setFolders(prevFolders =>
+        addSubfolder(prevFolders, newFolderData.parentId!, newFolder)
+      );
+    } else {
+      setFolders(prev => [...prev, newFolder]);
+    }
+
+    setIsFolderModalOpen(false);
+  };
+
+  const addSubfolder = (folders: Folder[], parentId: string, newFolder: Folder): Folder[] => {
+    return folders.map(folder => {
+      if (folder.id === parentId) {
+        return {
+          ...folder,
+          items: [...folder.items, newFolder],
+        };
+      }
+
+      if (folder.isFolder) {
+        return {
+          ...folder,
+          items: addSubfolder(folder.items.filter(isFolder), parentId, newFolder),
+        };
+      }
+
+      return folder;
+    });
+  };
+
+  const isFolder = (item: CardItem | Folder): item is Folder => {
+    return (item as Folder).isFolder === true;
+  };
+
+  const renderFolders = (foldersList: (Folder | CardItem)[], depth = 0) => {
+    return foldersList.map(item => {
+      if (isFolder(item)) {
+        return (
+          <div
+            key={item.id}
+            className="folder-wrapper"
+            style={{ marginLeft: `${depth * 20}px` }}
+            onContextMenu={(e) => handleFolderContextMenu(e, item.id)}
+          >
+            <FolderItem
+              folder={item}
+              onAddSubfolder={() => openFolderModal(item.id)}
+            />
+          </div>
+        );
+      }
+      return null;
+    });
+  };
 
   const sectionMenuOptions = [
     {
-      label: "New Folder",
+      label: "Nova Pasta",
       icon: "folder-open",
-      onClick: () => console.log("Creating new folder"),
+      onClick: () => openFolderModal(),
     },
+  ];
+
+  const folderMenuOptions = [
     {
-      label: "Sort by Name",
-      icon: "info",
-      onClick: () => console.log("Sorting folders by name"),
+      label: "Nova Subpasta",
+      icon: "folder-plus",
+      onClick: () => {
+        if (contextMenuFolderId) {
+          openFolderModal(contextMenuFolderId);
+        }
+      },
     },
-    {
-      label: "Sort by Date",
-      icon: "info",
-      onClick: () => console.log("Sorting folders by date"),
-    },
-    {
-      divider: true,
-      label: "",
-      onClick: () => { },
-    },
-    {
-      label: "Refresh",
-      icon: "info",
-      onClick: () => console.log("Refreshing folder list"),
-    },
-  ]
+  ];
 
   return (
     <section className="folders__container" onContextMenu={handleSectionContextMenu}>
       <h3 className="folders__h3">Pastas</h3>
+
       <div className="folders__container-items">
-        {pastas.map((folder) => (
-          <FolderItem key={folder.id} folder={folder} />
-        ))}
+        {renderFolders(folders)}
       </div>
+
+      <NewsFolderMenu
+        isOpen={isFolderModalOpen}
+        onClose={() => setIsFolderModalOpen(false)}
+        title={newFolderData.title}
+        color={newFolderData.color}
+        itemTypes={itemTypes}
+        selectedType={newFolderData.type}
+        onTitleChange={(e) => setNewFolderData({ ...newFolderData, title: e.target.value })}
+        onColorChange={(e) => setNewFolderData({ ...newFolderData, color: e.target.value })}
+        onTypeChange={(e) => setNewFolderData({ ...newFolderData, type: e.target.value as ItemType })}
+        onSubmit={handleCreateFolder}
+      />
+
       {sectionContextMenu && (
-        <MenuFolder position={sectionContextMenu} onClose={closeSectionContextMenu} options={sectionMenuOptions} />
+        <MenuFolder
+          position={sectionContextMenu}
+          onClose={closeSectionContextMenu}
+          options={contextMenuFolderId ? folderMenuOptions : sectionMenuOptions}
+        />
       )}
     </section>
-  )
-}
+  );
+};
 
-export default UserFolders
-
+export default UserFolders;

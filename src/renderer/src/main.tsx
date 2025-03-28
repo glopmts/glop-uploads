@@ -3,8 +3,8 @@ import React from "react"
 import ReactDOM from "react-dom/client"
 import { HashRouter, Route, Routes } from "react-router-dom"
 import App from "./app"
+import FolderId from "./pages/folder/[id]"
 import Home from "./pages/home/home"
-import FolderId from "./pages/items/[id]"
 
 const queryClient = new QueryClient()
 
@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route element={<App />}>
             <Route path="/" element={<Home />} />
-            <Route path="/items" element={<FolderId />} />
+            <Route path="/folder" element={<FolderId />} />
           </Route>
         </Routes>
       </QueryClientProvider>
