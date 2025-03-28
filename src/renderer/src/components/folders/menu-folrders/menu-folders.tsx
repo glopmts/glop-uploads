@@ -16,10 +16,11 @@ type MenuFolderProps = {
   folderId?: string;
   folderTitle?: string;
   options?: MenuOption[];
+  subPasta: (parentId: string | null) => void;
   editeMenu?: (id: string) => void;
 };
 
-const MenuFolder = ({ onClose, position, folderId, folderTitle, options, editeMenu }: MenuFolderProps) => {
+const MenuFolder = ({ onClose, position, folderId, folderTitle, options, editeMenu, subPasta }: MenuFolderProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -38,6 +39,11 @@ const MenuFolder = ({ onClose, position, folderId, folderTitle, options, editeMe
       label: "Rename",
       icon: "pencil",
       onClick: () => editeMenu && editeMenu(folderId!),
+    },
+    {
+      label: "Nova subpasta",
+      icon: "folder-open",
+      onClick: () => subPasta(folderId!),
     },
     {
       divider: true,

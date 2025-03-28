@@ -131,17 +131,6 @@ const UserFolders: FC = () => {
     },
   ];
 
-  const folderMenuOptions = [
-    {
-      label: "Nova Subpasta",
-      icon: "folder-plus",
-      onClick: () => {
-        if (contextMenuFolderId) {
-          openFolderModal(contextMenuFolderId);
-        }
-      },
-    },
-  ];
 
   return (
     <section className="folders__container" onContextMenu={handleSectionContextMenu}>
@@ -168,7 +157,9 @@ const UserFolders: FC = () => {
         <MenuFolder
           position={sectionContextMenu}
           onClose={closeSectionContextMenu}
-          options={contextMenuFolderId ? folderMenuOptions : sectionMenuOptions}
+          subPasta={openFolderModal}
+          options={contextMenuFolderId ? [] : sectionMenuOptions}
+          folderId={contextMenuFolderId!}
         />
       )}
     </section>
