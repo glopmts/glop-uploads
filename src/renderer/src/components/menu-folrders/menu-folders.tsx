@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import "./menu-folders.scss";
 
 type MenuOption = {
@@ -15,22 +16,28 @@ type MenuFolderProps = {
   folderId?: string;
   folderTitle?: string;
   options?: MenuOption[];
+  editeMenu?: (id: string) => void;
 };
 
-const MenuFolder = ({ onClose, position, folderId, folderTitle, options }: MenuFolderProps) => {
+const MenuFolder = ({ onClose, position, folderId, folderTitle, options, editeMenu }: MenuFolderProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const handleNavigate = (id: string) => {
+    navigate({ pathname: "/items", search: `?id=${id}` });
+  }
 
   // Default menu options if none provided
   const defaultOptions: MenuOption[] = [
     {
       label: "Open",
       icon: "folder-open",
-      onClick: () => console.log(`Opening folder: ${folderTitle || folderId}`),
+      onClick: () => handleNavigate(folderId!),
     },
     {
       label: "Rename",
       icon: "pencil",
-      onClick: () => console.log(`Renaming folder: ${folderTitle || folderId}`),
+      onClick: () => editeMenu && editeMenu(folderId!),
     },
     {
       divider: true,

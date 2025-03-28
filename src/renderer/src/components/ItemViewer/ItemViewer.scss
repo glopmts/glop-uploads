@@ -39,7 +39,7 @@
 
   h3 {
     margin: 0;
-    color: g.$hs-colot;
+    color: g.$hs-color;
     font-size: g.$font-size-lg;
     white-space: nowrap;
     overflow: hidden;
@@ -60,7 +60,7 @@
 
     &:hover {
       background-color: g.$card-hover;
-      color: g.$hs-colot;
+      color: g.$hs-color;
     }
   }
 }
@@ -101,7 +101,7 @@
 
     .audio-title {
       font-size: g.$font-size-lg;
-      color: g.$hs-colot;
+      color: g.$hs-color;
       margin-bottom: g.$spacing-md;
     }
 

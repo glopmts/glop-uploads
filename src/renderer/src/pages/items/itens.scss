@@ -1,9 +1,12 @@
 @use "../../scss/globals.scss" as g;
 
+// Main container and layout
 .itens-id {
+
+  // Container with improved scrolling performance
   &__container {
     background-color: g.$background-color;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     min-height: 100vh;
     display: flex;
@@ -12,164 +15,354 @@
     margin: 0;
     padding: 0;
     position: relative;
+    // Improve scrolling performance in Electron
+    -webkit-overflow-scrolling: touch;
+    // Prevent content flash during resize
+    will-change: transform;
   }
 
+  // Enhanced breadcrumb navigation
+  &__breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 20px;
+    font-size: 14px;
+    color: g.$hs-color;
+    border-bottom: 1px solid g.$border-color;
+    background-color: rgba(g.$background-color, 0.95);
+    backdrop-filter: blur(5px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+
+    a {
+      text-decoration: none;
+      color: g.$hs-color;
+      transition: color 0.2s ease;
+      font-weight: 500;
+
+      &:hover {
+        color: g.$link-color;
+        text-decoration: underline;
+      }
+
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+  }
+
+  &__breadcrumb-separator {
+    margin: 0 5px;
+    color: g.$text-secondary;
+    user-select: none;
+  }
+
+  // Content container with improved spacing
   &__infor-details {
-    width: 80%;
-    padding: 10px;
+    width: 100%;
+    max-width: 1400px;
+    padding: 20px;
+    margin: 0 auto;
   }
 
+  // Responsive grid layout
   &__ul {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: g.$spacing-md;
     align-items: start;
     justify-content: space-between;
     list-style: none;
     padding: 0;
+    margin: 0;
   }
 
+  // Enhanced card styling
   &__card {
-    width: 180px;
-    height: 140px;
-    padding: 8px;
-    border-width: 1px;
+    width: 100%;
+    height: 160px;
+    padding: 10px;
+    border: 1px solid g.$border-color;
     border-radius: g.$border-radius-lg;
-    border-color: g.$border-color;
     background-color: g.$card-bg;
     overflow: hidden;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     display: flex;
     flex-direction: column;
+    position: relative;
+
+    // Hardware acceleration for smoother animations
+    transform: translateZ(0);
+    backface-visibility: hidden;
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-color: transparent;
       background-color: g.$card-hover;
     }
 
-    .item-preview-container {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-
-      .item-title {
-        margin-top: auto;
-        padding-top: 8px;
-        font-size: g.$font-size-sm;
-        color: g.$hs-colot;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-align: center;
-      }
-    }
-
-    .item-preview {
-      width: 100%;
-      height: 100px;
-      object-fit: cover;
-      border-radius: g.$border-radius-md;
-    }
-
-    .video-preview {
-      width: 100%;
-      height: 100px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      border-radius: g.$border-radius-md;
-      overflow: hidden;
-
-      .play-icon {
-        position: absolute;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        align-items: center;
-        justify-content: center;
-        display: flex;
-        z-index: 300;
-        border-radius: g.$border-radius-md;
-        color: g.$hs-colot;
-        background-color: rgba(0, 0, 0, 0.3);
-        font-size: 24px;
-        transition: background-color 0.2s;
-      }
-
-      &:hover .play-icon {
-        background-color: rgba(0, 0, 0, 0.5);
-      }
-    }
-
-    .document-preview,
-    .audio-preview,
-    .file-preview {
-      width: 100%;
-      height: 100px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: g.$card-bg;
-      border-radius: g.$border-radius-md;
-
-      .document-icon,
-      .audio-icon,
-      .file-icon {
-        font-size: 36px;
-      }
-    }
-
-    .document-preview {
-      background-color: rgba(37, 99, 235, 0.1);
-    }
-
-    .audio-preview {
-      background-color: rgba(147, 51, 234, 0.1);
-    }
-
-    .file-preview {
-      background-color: rgba(245, 158, 11, 0.1);
+    &:active {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
   }
 
+  // Empty state styling
   &__not-found {
     display: flex;
     width: 100%;
+    height: 200px;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+    color: g.$text-secondary;
+    margin-top: 40px;
   }
 
   &__text-not {
     font-size: g.$font-size-lg;
+    font-weight: 500;
   }
 }
 
+// Item preview containers
+.item-preview-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
 
+  .item-title {
+    margin-top: auto;
+    padding-top: 10px;
+    font-size: g.$font-size-sm;
+    color: g.$hs-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    font-weight: 500;
+  }
+}
+
+// Image preview
+.item-preview {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: g.$border-radius-md;
+  transition: transform 0.3s ease;
+
+  .itens-id__card:hover & {
+    transform: scale(1.05);
+  }
+}
+
+// Video preview with enhanced play button
+.video-preview {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-radius: g.$border-radius-md;
+  overflow: hidden;
+
+  .play-icon {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    z-index: 3;
+    border-radius: g.$border-radius-md;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.3);
+    font-size: 28px;
+    transition: all 0.3s ease;
+
+    &::before {
+      content: '';
+      display: block;
+      width: 0;
+      height: 0;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left: 25px solid white;
+      margin-left: 5px;
+      filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+    }
+  }
+
+  .itens-id__card:hover & .play-icon {
+    background-color: rgba(0, 0, 0, 0.5);
+    transform: scale(1.1);
+  }
+}
+
+// Document, audio and file previews
+.document-preview,
+.audio-preview,
+.file-preview {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: g.$border-radius-md;
+  transition: transform 0.3s ease;
+
+  .document-icon,
+  .audio-icon,
+  .file-icon {
+    font-size: 40px;
+    transition: transform 0.3s ease;
+  }
+
+  .itens-id__card:hover & {
+
+    .document-icon,
+    .audio-icon,
+    .file-icon {
+      transform: scale(1.1);
+    }
+  }
+}
+
+// Specific background colors for different file types
+.document-preview {
+  background-color: rgba(37, 99, 235, 0.1);
+
+  .itens-id__card:hover & {
+    background-color: rgba(37, 99, 235, 0.15);
+  }
+}
+
+.audio-preview {
+  background-color: rgba(147, 51, 234, 0.1);
+
+  .itens-id__card:hover & {
+    background-color: rgba(147, 51, 234, 0.15);
+  }
+}
+
+.file-preview {
+  background-color: rgba(245, 158, 11, 0.1);
+
+  .itens-id__card:hover & {
+    background-color: rgba(245, 158, 11, 0.15);
+  }
+}
+
+// Enhanced context menu
 .context-menu {
   position: absolute;
-  background: #333;
-  color: white;
-  border-radius: 5px;
+  background: g.$card-bg;
+  color: g.$hs-color;
+  border-radius: g.$border-radius-md;
   padding: 8px 0;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  min-width: 150px;
+  min-width: 180px;
+  border: 1px solid g.$border-color;
+  animation: contextMenuFadeIn 0.15s ease-out;
+  transform-origin: top left;
+
+  // Ensure context menu stays within viewport
+  &.right-aligned {
+    transform-origin: top right;
+  }
+
+  button {
+    display: flex;
+    width: 100%;
+    background: none;
+    border: none;
+    color: g.$hs-color;
+    text-align: left;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.15s ease;
+    align-items: center;
+
+    &:hover {
+      background: rgba(g.$link-color, 0.1);
+    }
+
+    &:active {
+      background: rgba(g.$link-color, 0.2);
+    }
+
+    // Add space for icons
+    &::before {
+      content: '';
+      width: 20px;
+      margin-right: 8px;
+      display: inline-block;
+    }
+  }
 }
 
-.context-menu button {
-  display: block;
-  width: 100%;
-  background: none;
-  border: none;
-  color: white;
-  text-align: left;
-  padding: 8px 12px;
-  cursor: pointer;
+// Animation for context menu
+@keyframes contextMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
-.context-menu button:hover {
-  background: rgba(255, 255, 255, 0.2);
+// Media queries for responsive design
+@media (max-width: 768px) {
+  .itens-id {
+    &__ul {
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    &__card {
+      height: 140px;
+    }
+
+    &__breadcrumb {
+      padding: 12px 16px;
+      font-size: 13px;
+    }
+  }
+
+  .item-preview,
+  .video-preview,
+  .document-preview,
+  .audio-preview,
+  .file-preview {
+    height: 90px;
+  }
+}
+
+// Electron-specific optimizations
+@media (prefers-color-scheme: dark) {
+  .context-menu {
+    background: #333;
+    color: white;
+    border-color: #444;
+
+    button {
+      color: white;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+  }
 }

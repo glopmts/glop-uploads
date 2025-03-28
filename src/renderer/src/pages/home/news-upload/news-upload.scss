@@ -29,7 +29,7 @@
 
     label {
       font-size: g.$font-size-md;
-      color: g.$hs-colot;
+      color: g.$hs-color;
     }
   }
 
@@ -37,7 +37,7 @@
     background-color: g.$input-bg;
     border: 1px solid g.$input-border;
     border-radius: g.$border-radius;
-    color: g.$hs-colot;
+    color: g.$hs-color;
     font-size: g.$font-size-md;
     padding: g.$spacing-sm;
     outline: none;
@@ -49,7 +49,7 @@
 
     option {
       background-color: g.$dark-background-color;
-      color: g.$hs-colot;
+      color: g.$hs-color;
     }
   }
 
@@ -63,7 +63,7 @@
   &__cancel-button {
     background-color: transparent;
     border: 1px solid g.$input-border;
-    color: g.$hs-colot;
+    color: g.$hs-color;
 
     &:hover {
       background-color: g.$card-hover;
