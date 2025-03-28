@@ -10,6 +10,7 @@
     "src/renderer/src/lib",
     "src/api/**/*",
     "src/renderer/src/context/**/*",
+    "src/renderer/src/services/*",
   ],
   "compilerOptions": {
     "composite": true,

@@ -7,6 +7,10 @@
     "src/renderer/src/hooks",
     "src/global.d.ts",
     "src/renderer/src/lib",
+    "src/renderer/src/types/*",
+    "src/renderer/src/context/*",
+    "src/api/*",
+    "src/renderer/src/services/*",
   ],
   "compilerOptions": {
     "composite": true,

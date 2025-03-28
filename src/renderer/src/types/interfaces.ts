@@ -21,3 +21,11 @@ export interface Folder extends CardItem {
   updatedAt: Date
   isFolder?: boolean 
 }
+
+export interface User {
+  id: string;
+  name?: string;
+  image?: string;
+  email: string;
+  role: string;
+}

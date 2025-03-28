@@ -7,7 +7,14 @@ import { AuthProvider } from "./context/AuthProvider"
 import FolderId from "./pages/folder/[id]"
 import Home from "./pages/home/home"
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -25,4 +32,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     </HashRouter>
   </React.StrictMode>,
 )
+
+export { queryClient }
 

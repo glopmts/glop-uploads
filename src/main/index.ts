@@ -1,11 +1,12 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
+import axios from "axios";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
-import fetch from 'node-fetch';
 import { join } from "path";
 import icon from "../../resources/icon.png?asset";
 
+
+
 function createWindow(): void {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 1280,
     height: 720,
@@ -16,10 +17,20 @@ function createWindow(): void {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
       webSecurity: false,
-      allowRunningInsecureContent: true,
       nodeIntegration: true,
-      contextIsolation: false
-    },
+      contextIsolation: true
+    }
+  });
+  mainWindow.loadURL("http://localhost:3000")
+
+  ipcMain.handle("fetch-data", async () => {
+    try {
+      const response = await axios.get("http://localhost:5001/api");
+      return response.data;
+    } catch (error) {
+      console.error("Erro na requisição:", error);
+      return { error: "Falha ao buscar os dados" };
+    }
   });
 
   mainWindow.on("ready-to-show", () => {
@@ -29,22 +40,6 @@ function createWindow(): void {
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
     return { action: "deny" };
-  });
-
-  ipcMain.handle('fetch-data', async (event, url: string) => {
-    try {
-      const response = await fetch(url);
-      return {
-        ok: response.ok,
-        status: response.status,
-        json: await response.json()
-      };
-    } catch (error) {
-      if (error instanceof Error) {
-        return { error: error.message };
-      }
-      return { error: "An unknown error occurred" };
-    }
   });
 
 

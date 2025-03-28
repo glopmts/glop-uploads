@@ -2,8 +2,11 @@ import { FoldIcon } from "@primer/octicons-react";
 import { Button } from "@renderer/components/button/button";
 import { Input } from "@renderer/components/input/input";
 import { Modal } from "@renderer/components/modal/modal";
+import { useAuth } from "@renderer/hooks/useAuth";
 import { ItemType } from "@renderer/types/interfaces";
 import { FC, useState } from "react";
+import LaodingButtons from "../../../components/loading-buttons/loading-buttons";
+import { foldersServices } from "../../../services/folders";
 import "./news-folder.scss";
 
 const NewsFolder: FC = () => {
@@ -11,6 +14,9 @@ const NewsFolder: FC = () => {
   const [title, setTitle] = useState('');
   const [color, setColor] = useState('');
   const [selectedType, setSelectedType] = useState<ItemType>("file")
+  const [error, setError] = useState<string | null>(null)
+  const { userId } = useAuth();
+  const [loader, setLoader] = useState(false);
 
   const itemTypes: ItemType[] = ["file", "image", "video", "audio", "document"]
 
@@ -26,8 +32,25 @@ const NewsFolder: FC = () => {
     setColor(e.target.value)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    if (!title.trim() || !userId) {
+      setError("Necessario nome pasta ou Authenticação!")
+      return;
+    }
 
+    setLoader(true)
+
+    try {
+      await foldersServices.createFolder(userId!, title, color, selectedType)
+      setTrueModal(false);
+      setTitle("");
+      setColor("");
+    } catch (error) {
+      setError((error as Error).message);
+      setLoader(false)
+    } finally {
+      setLoader(false)
+    }
   }
 
   return (
@@ -60,11 +83,20 @@ const NewsFolder: FC = () => {
               }} />
             </div>
           </div>
+          <div className="">
+            <span>{error}</span>
+          </div>
           <div className="news-upload__modal-actions">
             <Button onClick={() => setTrueModal(false)} className="news-upload__cancel-button">
               Cancelar
             </Button>
-            <Button theme="primary" onClick={handleSubmit}>Confirmar</Button>
+            <Button theme="primary" disabled={loader} onClick={handleSubmit}>
+              {loader ? (
+                <LaodingButtons />
+              ) : (
+                "Confirmar"
+              )}
+            </Button>
           </div>
         </Modal>
       )}

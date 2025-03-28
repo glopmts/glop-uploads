@@ -28,12 +28,18 @@ const getIconByType = (type: ItemType) => {
 };
 
 // Função auxiliar para formatar data
-const formatDate = (date: Date) =>
-  new Intl.DateTimeFormat("pt-BR", {
+const formatDate = (date: string | Date) => {
+  const parsedDate = new Date(date);
+  if (isNaN(parsedDate.getTime())) {
+    return "Data inválida"; // Retorne algo adequado em caso de erro de data
+  }
+  return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-  }).format(date);
+  }).format(parsedDate);
+};
+
 
 const FolderItem: FC<FolderItemProps> = ({ folder }) => {
   const navigate = useNavigate();
@@ -89,7 +95,7 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
           <div className="folder-item__content">
             <span className="folder-item__title">{folder.title}</span>
             <span className="folder-item__info">
-              {folder.items.length} {folder.items.length === 1 ? "item" : "itens"} • {formatDate(folder.updatedAt)}
+              {folder.items && folder.items.length} {folder.items && folder.items.length === 1 ? "item" : "itens"} • {formatDate(folder.updatedAt)}
             </span>
           </div>
           <div className="folder-item__icon">{getIconByType(folder.type)}</div>
@@ -102,6 +108,7 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
           editeMenu={handleMenuToggle}
           onClose={closeContextMenu}
           folderId={folder.id}
+          subPasta={() => { }}
           folderTitle={folder.title}
         />
       )}

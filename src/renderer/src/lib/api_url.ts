@@ -1,1 +1,1 @@
-export const api_url = process.env.API_URL || "http://localhost:5001/api"
+export const API_BASE_URL = process.env.API_URL || "http://localhost:5001/api"

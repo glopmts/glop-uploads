@@ -1,16 +1,11 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { authService } from '../../../api/auth';
+import { User } from '../types/interfaces';
 import { AuthContext } from './AuthContext';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-}
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const userId = user?.id ?? null;
   const [token, setToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -128,6 +123,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     <AuthContext.Provider
       value={{
         user,
+        userId,
         token,
         isAuthenticated: !!user,
         isLoading,

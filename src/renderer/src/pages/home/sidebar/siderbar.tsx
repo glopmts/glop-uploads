@@ -19,7 +19,6 @@ const Sidebar = () => {
   const { user, isAuthenticated, logout, isInitialized } = useAuth();
   const [authModalOpen, setAuthModalOpen] = useState(false);
 
-  // Don't render anything until auth is initialized to prevent flashing
   if (!isInitialized) {
     return null;
   }
@@ -51,12 +50,17 @@ const Sidebar = () => {
       <footer className="sidebar__footer">
         {isAuthenticated && user ? (
           <div className="sidebar__user-info">
-            <div className="sidebar__user-avatar">
-              {user.name?.charAt(0).toUpperCase()}
-            </div>
-            <div className="sidebar__user-details">
-              <p className="sidebar__user-name">{user.name}</p>
-              <p className="sidebar__user-email">{user.email}</p>
+            <div className="sidebar__user-info-user">
+              {user.image ? (
+                <img src={user.image} className="sidebar__user-image" />
+              ) : (
+                <div className="sidebar__user-avatar">
+                  {user.name?.charAt(0).toUpperCase()}
+                </div>
+              )}
+              <div className="sidebar__user-details">
+                <p className="sidebar__user-name">{user.name}</p>
+              </div>
             </div>
             <button
               className="sidebar__logout-button"

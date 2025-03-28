@@ -1,15 +1,15 @@
-@use "../../../scss/globals.scss";
+@use "../../../scss/globals.scss" as g;
 
 .sidebar {
-  background-color: globals.$dark-background-color;
-  color: globals.$muted-color;
+  background-color: g.$dark-background-color;
+  color: g.$muted-color;
   flex-direction: column;
   display: flex;
   transition: opacity ease 0.2s;
-  border-right: solid 1px globals.$border-color;
+  border-right: solid 1px g.$border-color;
   position: relative;
   overflow: hidden;
-  padding-top: globals.$spacing-unit;
+  padding-top: g.$spacing-unit;
   width: 220px;
   height: 100%;
 
@@ -34,7 +34,7 @@
     &--active {
       .sidebar__menu-item-button {
         background-color: rgba(255, 255, 255, 0.1);
-        color: globals.$hs-color;
+        color: g.$hs-color;
       }
     }
   }
@@ -43,10 +43,10 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: globals.$spacing-unit * 1.5;
+    padding: g.$spacing-unit * 1.5;
     background: none;
     border: none;
-    color: globals.$muted-color;
+    color: g.$muted-color;
     cursor: pointer;
     text-align: left;
     transition: background-color 0.2s, color 0.2s;
@@ -60,7 +60,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: globals.$spacing-unit;
+    margin-right: g.$spacing-unit;
 
     svg {
       width: 16px;
@@ -69,59 +69,78 @@
   }
 
   &__menu-item-text {
-    font-size: globals.$body-font-size;
+    font-size: g.$body-font-size;
   }
 
   &__footer {
     padding: 1rem;
-    border-top: 1px solid #e1e4e8;
+    border-top: 1px solid g.$border-color;
   }
 
   &__user-info {
     display: flex;
+    width: 100%;
+    align-items: start;
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  &__user-info-user {
+    display: flex;
+    align-items: center;
+    gap: g.$spacing-xs * 4;
+    width: 100%;
   }
 
   &__user-avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: #0366d6;
-    color: white;
+    background-color: g.$blue-500;
+    color: g.$hs-color;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    margin: 0 auto;
   }
 
   &__user-details {
     text-align: center;
   }
 
+  &__user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  }
+
   &__user-name {
     font-weight: 600;
     margin: 0;
+    font-size: g.$font-size-md * 1.2;
+    color: g.$muted-color;
   }
 
   &__user-email {
     font-size: 0.8rem;
-    color: #586069;
+    color: g.$text-secondary;
     margin: 0;
   }
 
   &__logout-button {
     background: none;
-    border: 1px solid #d1d5da;
+    border: 1px solid g.$border-color;
     border-radius: 6px;
+    color: g.$hs-color;
     padding: 0.25rem 0.5rem;
     cursor: pointer;
     margin-top: 0.5rem;
     width: 100%;
+    background-color: g.$error-color;
 
     &:hover {
-      background-color: #f6f8fa;
+      background-color: g.$card-hover;
+      transition-duration: 200ms;
     }
   }
 

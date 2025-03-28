@@ -1,0 +1,24 @@
+@use "../../scss/globals.scss";
+
+.loading-container-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: globals.$muted-color;
+
+  .loading-spinner-buttons {
+    width: 20px;
+    height: 20px;
+    border: 2px solid globals.$border-color;
+    border-top-color: globals.$blue-500;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
