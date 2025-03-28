@@ -5,9 +5,11 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.tsx",
     "src/preload/*.d.ts",
-    "src/renderer/hooks/**/*",
+    "src/renderer/src/hooks/**/*",
     "src/global.d.ts",
-    "src/renderer/lib"
+    "src/renderer/src/lib",
+    "src/api/**/*",
+    "src/renderer/src/context/**/*",
   ],
   "compilerOptions": {
     "composite": true,

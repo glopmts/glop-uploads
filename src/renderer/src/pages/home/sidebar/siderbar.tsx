@@ -1,6 +1,10 @@
 import { HomeIcon } from "@primer/octicons-react"
+import AuthUser from "@renderer/components/user/user-auth"
 import cn from "classnames"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useState } from "react"
+import { useLocation } from "react-router-dom"
+import { useAuth } from "../../../hooks/useAuth"
+import "./siderbar.scss"
 
 const routes = [
   {
@@ -8,18 +12,18 @@ const routes = [
     nameKey: "Home",
     render: () => <HomeIcon />,
   },
-  // Add more routes as needed
 ]
 
 const Sidebar = () => {
-  const navigate = useNavigate()
-  const location = useLocation()
+  const location = useLocation();
+  const { user, isAuthenticated, logout, isInitialized } = useAuth();
+  const [authModalOpen, setAuthModalOpen] = useState(false);
 
-  const handleSidebarItemClick = (path: string) => {
-    if (path !== location.pathname) {
-      navigate(path)
-    }
+  // Don't render anything until auth is initialized to prevent flashing
+  if (!isInitialized) {
+    return null;
   }
+
 
   return (
     <aside className="sidebar">
@@ -32,7 +36,10 @@ const Sidebar = () => {
                 "sidebar__menu-item--active": location.pathname === path,
               })}
             >
-              <button type="button" className="sidebar__menu-item-button" onClick={() => handleSidebarItemClick(path)}>
+              <button
+                type="button"
+                className="sidebar__menu-item-button"
+              >
                 <span className="sidebar__menu-item-icon">{render()}</span>
                 <span className="sidebar__menu-item-text">{nameKey}</span>
               </button>
@@ -40,8 +47,45 @@ const Sidebar = () => {
           ))}
         </ul>
       </div>
-    </aside>
-  )
-}
 
-export default Sidebar
+      <footer className="sidebar__footer">
+        {isAuthenticated && user ? (
+          <div className="sidebar__user-info">
+            <div className="sidebar__user-avatar">
+              {user.name?.charAt(0).toUpperCase()}
+            </div>
+            <div className="sidebar__user-details">
+              <p className="sidebar__user-name">{user.name}</p>
+              <p className="sidebar__user-email">{user.email}</p>
+            </div>
+            <button
+              className="sidebar__logout-button"
+              onClick={() => {
+                logout();
+              }}
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <button
+            className="sidebar__auth-button"
+            onClick={() => setAuthModalOpen(true)}
+          >
+            Login/Register
+          </button>
+        )}
+      </footer>
+
+      {/* Only render the auth modal when needed */}
+      {authModalOpen && (
+        <AuthUser
+          isModal={authModalOpen}
+          setClose={() => setAuthModalOpen(false)}
+        />
+      )}
+    </aside>
+  );
+};
+
+export default Sidebar;

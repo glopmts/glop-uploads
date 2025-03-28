@@ -1,0 +1,59 @@
+@use "../../scss/globals.scss" as g;
+
+.auth-register {
+  &__container {
+    width: 100%;
+  }
+
+  &__infor-form {
+    display: flex;
+    flex-direction: column;
+    gap: g.$spacing-md;
+    margin-bottom: g.$spacing-md;
+  }
+
+  &__infor-itens {
+    display: flex;
+    flex-direction: column;
+    gap: g.$spacing-sm;
+
+    label {
+      color: g.$hs-color;
+      font-size: g.$font-size-md;
+    }
+  }
+
+  &__error {
+    color: g.$error-color;
+    margin-bottom: g.$spacing-md;
+    font-size: g.$font-size-sm;
+  }
+
+  &__switch,
+  &__resend {
+    display: flex;
+    gap: g.$spacing-xs;
+    align-items: center;
+    justify-content: center;
+    margin-top: g.$spacing-sm;
+    font-size: g.$font-size-sm;
+
+    button {
+      background: none;
+      border: none;
+      color: g.$primary-color;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+
+      &:hover {
+        color: g.$card-hover;
+      }
+
+      &:disabled {
+        color: g.$disabled-color;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

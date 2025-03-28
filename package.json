@@ -27,6 +27,7 @@
     "@tanstack/react-query": "^5.69.0",
     "axios": "^1.8.4",
     "classnames": "^2.5.1",
+    "electron-store": "^10.0.1",
     "electron-updater": "^6.3.9",
     "node-fetch": "^3.3.2",
     "react-dropzone": "^14.3.8",
