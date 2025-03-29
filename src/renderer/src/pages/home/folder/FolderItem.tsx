@@ -1,15 +1,22 @@
 import { Button } from "@renderer/components/button/button";
 import { Input } from "@renderer/components/input/input";
+import LaodingButtons from "@renderer/components/loading-buttons/loading-buttons";
 import { Modal } from "@renderer/components/modal/modal";
+import { useToastNotification } from "@renderer/hooks/useToastNotification";
+import { ServicesFiles } from "@renderer/services/files-uploads";
+import { foldersServices } from "@renderer/services/folders";
+import useFoldersQuery from "@renderer/services/queryGetFolders";
 import type { Folder, ItemType } from "@renderer/types/interfaces";
-import { useCallback, useMemo, useState, type FC } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
 import { File, FileText, Folder as FolderIcon, Image, Music, Video } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import MenuFolder from "../../../components/folders/menu-folrders/menu-folders";
 
 interface FolderItemProps {
   folder: Folder;
-  onAddSubfolder?: () => void
+  userId?: string;
+  onAddSubfolder?: () => void;
+  handleDelete: (id: string) => void;
 }
 
 const itemTypes: ItemType[] = ["file", "image", "video", "audio", "document"];
@@ -39,14 +46,20 @@ const formatDate = (date: string | Date) => {
   }).format(parsedDate);
 };
 
-
-const FolderItem: FC<FolderItemProps> = ({ folder }) => {
+const FolderItem: FC<FolderItemProps> = ({ folder, handleDelete, userId }) => {
   const navigate = useNavigate();
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
   const [isEditMenu, setEditMenu] = useState(false);
+  const [isLoader, setEditLoader] = useState(false);
   const [title, setTitle] = useState(folder.title || "");
   const [color, setColor] = useState(folder.color || "#27272a");
   const [selectedType, setSelectedType] = useState<ItemType>(folder.type || "file");
+  const toast = useToastNotification();
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const { refetch } = useFoldersQuery(userId!);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const folderRef = useRef<HTMLDivElement>(null);
 
   const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -55,7 +68,7 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
 
   const closeContextMenu = useCallback(() => setContextMenu(null), []);
 
-  const handleMenuToggle = useCallback(() => setEditMenu(prev => !prev), []);
+  const handleMenuToggle = useCallback(() => setEditMenu((prev) => !prev), []);
 
   const handleTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedType(e.target.value as ItemType);
@@ -69,9 +82,110 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
     setColor(e.target.value);
   }, []);
 
-  const handleSubmit = useCallback(() => {
-    // Adicionar lógica de atualização da pasta
-  }, []);
+  const handleSubmit = useCallback(async () => {
+    setEditLoader(true);
+    try {
+      await foldersServices.updateFolder(folder.id, title, color, selectedType);
+      toast.success("Pasta atualizada com sucesso!");
+      setEditMenu(false);
+      await refetch();
+    } catch (error) {
+      console.log(error);
+      toast.error("Error ao tentar atualizar pasta!");
+      setEditLoader(false);
+    } finally {
+      setEditLoader(false);
+    }
+  }, [color, folder.id, refetch, selectedType, title, toast]);
+
+  const getFileType = (file: File) => {
+    const type = file.type.split("/")[0];
+    if (type === "image") return "image";
+    if (type === "video") return "video";
+    if (type === "audio") return "audio";
+    return "document";
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleFileDrop = async (files: File[]) => {
+    if (!files.length || !userId) return;
+
+    try {
+      setIsUploading(true);
+
+      for (const file of files) {
+        await ServicesFiles.uploadFile(
+          userId,
+          file.name,
+          getFileType(file),
+          folder.id,
+          file,
+          (progress) => setUploadProgress(progress)
+        );
+      }
+
+      toast.success("Upload concluído", "Arquivos enviados com sucesso para a pasta");
+      refetch();
+    } catch (error) {
+      toast.error("Erro no upload", "Não foi possível enviar os arquivos");
+      console.error(error);
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  // Set up native drag and drop event handlers
+  useEffect(() => {
+    const folderElement = folderRef.current;
+    if (!folderElement) return;
+
+    const handleDragEnter = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(true);
+    };
+
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!isDragOver) setIsDragOver(true);
+    };
+
+    const handleDragLeave = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Only set to false if we're leaving the folder element itself
+      // and not just moving between its children
+      if (e.currentTarget === folderElement && !folderElement.contains(e.relatedTarget as Node)) {
+        setIsDragOver(false);
+      }
+    };
+
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragOver(false);
+
+      if (e.dataTransfer?.files && e.dataTransfer.files.length > 0) {
+        const filesArray = Array.from(e.dataTransfer.files);
+        handleFileDrop(filesArray);
+      }
+    };
+
+    folderElement.addEventListener("dragenter", handleDragEnter);
+    folderElement.addEventListener("dragover", handleDragOver);
+    folderElement.addEventListener("dragleave", handleDragLeave);
+    folderElement.addEventListener("drop", handleDrop);
+
+    return () => {
+      folderElement.removeEventListener("dragenter", handleDragEnter);
+      folderElement.removeEventListener("dragover", handleDragOver);
+      folderElement.removeEventListener("dragleave", handleDragLeave);
+      folderElement.removeEventListener("drop", handleDrop);
+    };
+  }, [isDragOver, handleFileDrop]);
 
   const handleNavigate = useCallback(() => {
     navigate({ pathname: "/folder", search: `?id=${folder.id}&name=${folder.title}&type=${folder.type}` });
@@ -88,16 +202,27 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
         onContextMenu={handleContextMenu}
         onClick={handleNavigate}
         aria-label={`Abrir pasta ${folder.title}`}
+        ref={folderRef}
       >
-        <div className="folder-item__container" style={folderStyle}>
+        <div
+          className={`folder-item__container ${isDragOver ? 'folder-item__container--drag-over' : ''}`}
+          style={folderStyle}
+        >
           <div className="folder-item__tab"></div>
           <div className="folder-item__content">
             <span className="folder-item__title">{folder.title}</span>
             <span className="folder-item__info">
-              {folder.items && folder.items.length} {folder.items && folder.items.length === 1 ? "item" : "itens"} • {formatDate(folder.updatedAt)}
+              {folder.items && folder.items.length} {folder.items && folder.items.length === 1 ? "item" : "itens"} •{" "}
+              {formatDate(folder.updatedAt)}
             </span>
           </div>
           <div className="folder-item__icon">{getIconByType(folder.type)}</div>
+          {isUploading && (
+            <div className="folder-item__upload-progress">
+              <div className="folder-item__upload-bar" style={{ width: `${uploadProgress}%` }}></div>
+              <span className="folder-item__upload-text">{uploadProgress}%</span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -109,6 +234,7 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
           folderId={folder.id}
           subPasta={() => { }}
           folderTitle={folder.title}
+          handleDelete={() => handleDelete(folder.id)}
         />
       )}
 
@@ -142,8 +268,8 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
             <Button onClick={handleMenuToggle} className="news-upload__cancel-button">
               Cancelar
             </Button>
-            <Button theme="primary" onClick={handleSubmit}>
-              Atualizar
+            <Button theme="primary" disabled={isLoader} onClick={handleSubmit}>
+              {isLoader ? <LaodingButtons /> : "Atualizar"}
             </Button>
           </div>
         </Modal>

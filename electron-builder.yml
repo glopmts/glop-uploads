@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: nildedit
+productName: GlopUploads
 directories:
   buildResources: build
 files:
@@ -12,7 +12,7 @@ files:
 asarUnpack:
   - resources/**
 win:
-  executableName: nildedit
+  executableName: GlopUploads
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}
@@ -39,7 +39,8 @@ appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
 publish:
-  provider: generic
-  url: https://example.com/auto-updates
+  provider: github
+  owner: glopmts
+  repo: nildedit
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

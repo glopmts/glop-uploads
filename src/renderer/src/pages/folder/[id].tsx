@@ -27,7 +27,7 @@ const FolderId: FC = () => {
       }
       try {
         setIsLoading(true)
-        const res = await itemUploadsUser.getUploadsFolder(userId, type)
+        const res = await itemUploadsUser.getUploadsFolder(userId, type, id!)
         setFolders(res.folders || [])
         setItems(res.items || [])
       } catch (error) {

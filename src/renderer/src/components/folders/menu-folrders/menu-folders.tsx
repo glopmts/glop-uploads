@@ -18,9 +18,10 @@ type MenuFolderProps = {
   options?: MenuOption[];
   subPasta: (parentId: string | null) => void;
   editeMenu?: (id: string) => void;
+  handleDelete: (id: string) => void;
 };
 
-const MenuFolder = ({ onClose, position, folderId, folderTitle, options, editeMenu, subPasta }: MenuFolderProps) => {
+const MenuFolder = ({ onClose, position, folderId, folderTitle, options, editeMenu, subPasta, handleDelete }: MenuFolderProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -68,7 +69,7 @@ const MenuFolder = ({ onClose, position, folderId, folderTitle, options, editeMe
     {
       label: "Delete",
       icon: "trash",
-      onClick: () => console.log(`Deleting folder: ${folderTitle || folderId}`),
+      onClick: () => handleDelete(folderId!),
       danger: true,
     },
     {

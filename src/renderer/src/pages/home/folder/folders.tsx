@@ -1,12 +1,15 @@
 import type React from "react"
+import { useEffect, useState, type FC } from "react"
 
 import MenuFolder from "@renderer/components/folders/menu-folrders/menu-folders"
 import NewsFolderMenu from "@renderer/components/folders/news-folder-menu/news-folder-menu"
 import { LoadingSpinner } from "@renderer/components/loading-spinner/loading-spinner"
+import { DndProviderWrapper } from "@renderer/context/DndContext"
 import { useAuth } from "@renderer/hooks/useAuth"
+import { useToastNotification } from "@renderer/hooks/useToastNotification"
 import { foldersServices } from "@renderer/services/folders"
 import type { CardItem, Folder, ItemType } from "@renderer/types/interfaces"
-import { useState, type FC } from "react"
+import FileDragLayer from "../../../components/folders/FileDragLayer"
 import useFoldersQuery from "../../../services/queryGetFolders"
 import FolderItem from "./FolderItem"
 import "./folders.scss"
@@ -18,6 +21,7 @@ const UserFolders: FC = () => {
   const [sectionContextMenu, setSectionContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [contextMenuFolderId, setContextMenuFolderId] = useState<string | null>(null)
   const [errorMessage, setError] = useState<string | null>(null)
+  const toast = useToastNotification()
 
   const { data: folders = [], error, isLoading, refetch } = useFoldersQuery(userId!)
 
@@ -28,6 +32,28 @@ const UserFolders: FC = () => {
     color: "#3b82f6",
     parentId: null as string | null,
   })
+
+  // Setup global drag and drop event listeners
+  useEffect(() => {
+    const handleDragOver = (e: DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+
+    const handleDrop = (e: DragEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      // This is handled by individual folder components
+    }
+
+    document.addEventListener("dragover", handleDragOver)
+    document.addEventListener("drop", handleDrop)
+
+    return () => {
+      document.removeEventListener("dragover", handleDragOver)
+      document.removeEventListener("drop", handleDrop)
+    }
+  }, [])
 
   const handleSectionContextMenu = (e: React.MouseEvent) => {
     if (
@@ -88,12 +114,28 @@ const UserFolders: FC = () => {
             style={{ marginLeft: `${depth * 20}px` }}
             onContextMenu={(e) => handleFolderContextMenu(e, item.id)}
           >
-            <FolderItem folder={item} onAddSubfolder={() => openFolderModal(item.id)} />
+            <FolderItem
+              folder={item}
+              userId={userId!}
+              handleDelete={handleDelete}
+              onAddSubfolder={() => openFolderModal(item.id)}
+            />
           </div>
         )
       }
       return null
     })
+  }
+
+  const handleDelete = async (id: string) => {
+    try {
+      await foldersServices.deleteFolder(id)
+      await refetch()
+      toast.success("Deletado!", "Pasta deletado com sucesso")
+    } catch (error) {
+      toast.error("Erro", "Não foi possível deletar o Pasta")
+      console.log(error)
+    }
   }
 
   const sectionMenuOptions = [
@@ -113,51 +155,50 @@ const UserFolders: FC = () => {
   }
 
   return (
-    <section className="folders__container" onContextMenu={handleSectionContextMenu}>
-      <h3 className="folders__h3">Pastas</h3>
+    <DndProviderWrapper>
+      <section className="folders__container" onContextMenu={handleSectionContextMenu}>
+        <h3 className="folders__h3">Pastas</h3>
 
-      {isLoading ? (
-        <LoadingSpinner
-          size="small"
-          color="#6200ee"
-          thickness={6}
-          speed="fast"
-          text="Processing..."
+        {isLoading ? (
+          <LoadingSpinner size="small" color="#6200ee" thickness={6} speed="fast" text="Processing..." />
+        ) : error ? (
+          <div className="erro">
+            <span className="erro__message">{error}</span>
+          </div>
+        ) : (
+          <div className="folders__container-items">
+            {folders.length > 0 ? renderFolders(folders) : <p>Nenhuma pasta encontrada.</p>}
+          </div>
+        )}
+
+        <NewsFolderMenu
+          isOpen={isFolderModalOpen}
+          onClose={() => setIsFolderModalOpen(false)}
+          title={newFolderData.title}
+          color={newFolderData.color}
+          itemTypes={itemTypes}
+          selectedType={newFolderData.type}
+          onTitleChange={(e) => setNewFolderData({ ...newFolderData, title: e.target.value })}
+          onColorChange={(e) => setNewFolderData({ ...newFolderData, color: e.target.value })}
+          onTypeChange={(e) => setNewFolderData({ ...newFolderData, type: e.target.value as ItemType })}
+          onSubmit={handleCreateFolder}
+          errorMessage={errorMessage!}
         />
-      ) : error ? (
-        <div className="erro">
-          <span className="erro__message">{error}</span>
-        </div>
-      ) : (
-        <div className="folders__container-items">
-          {folders.length > 0 ? renderFolders(folders) : <p>Nenhuma pasta encontrada.</p>}
-        </div>
-      )}
 
-      <NewsFolderMenu
-        isOpen={isFolderModalOpen}
-        onClose={() => setIsFolderModalOpen(false)}
-        title={newFolderData.title}
-        color={newFolderData.color}
-        itemTypes={itemTypes}
-        selectedType={newFolderData.type}
-        onTitleChange={(e) => setNewFolderData({ ...newFolderData, title: e.target.value })}
-        onColorChange={(e) => setNewFolderData({ ...newFolderData, color: e.target.value })}
-        onTypeChange={(e) => setNewFolderData({ ...newFolderData, type: e.target.value as ItemType })}
-        onSubmit={handleCreateFolder}
-        errorMessage={errorMessage!}
-      />
+        {sectionContextMenu && (
+          <MenuFolder
+            position={sectionContextMenu}
+            onClose={closeSectionContextMenu}
+            subPasta={openFolderModal}
+            options={contextMenuFolderId ? [] : sectionMenuOptions}
+            folderId={contextMenuFolderId!}
+            handleDelete={handleDelete}
+          />
+        )}
 
-      {sectionContextMenu && (
-        <MenuFolder
-          position={sectionContextMenu}
-          onClose={closeSectionContextMenu}
-          subPasta={openFolderModal}
-          options={contextMenuFolderId ? [] : sectionMenuOptions}
-          folderId={contextMenuFolderId!}
-        />
-      )}
-    </section>
+        <FileDragLayer />
+      </section>
+    </DndProviderWrapper>
   )
 }
 

@@ -19,12 +19,13 @@ export const itemUploadsUser = {
       );
     }
   },
-  async getUploadsFolder(userId: string, type: string) {
+  async getUploadsFolder(userId: string, type: string, folderId?: string) {
     try {
       const { data } = await axios.post(
         `${API_BASE_URL}/files/userItemsFolder`,
         {
           userId,
+          folderId,
           type,
         }
       );

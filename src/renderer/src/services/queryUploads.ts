@@ -7,8 +7,7 @@ export default function UserItemsQuery(userId: string) {
     queryFn: async () => {
       if (!userId) throw new Error("ID do usuário inválido");
       const data = await itemUploadsUser.getUploads(userId);
-      console.log(data.data)
-      return data.data.items || []; 
+      return data.data.items || [];
     },
     enabled: !!userId,
     staleTime: 1000 * 60 * 5,

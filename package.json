@@ -3,8 +3,17 @@
   "version": "1.0.0",
   "description": "An Electron application with React and TypeScript",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "glopmts.com",
   "homepage": "https://electron-vite.org",
+  "build": {
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "glopmts",
+        "repo": "nildedit"
+      }
+    ]
+  },
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",
@@ -27,10 +36,13 @@
     "@tanstack/react-query": "^5.69.0",
     "axios": "^1.8.4",
     "classnames": "^2.5.1",
+    "electron-log": "^5.3.3",
     "electron-store": "^10.0.1",
     "electron-updater": "^6.3.9",
     "framer-motion": "^12.6.2",
     "node-fetch": "^3.3.2",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dropzone": "^14.3.8",
     "react-feather": "^2.0.10",
     "react-loading-skeleton": "^3.5.0",

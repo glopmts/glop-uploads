@@ -1,40 +1,30 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import axios from "axios";
 import { app, BrowserWindow, ipcMain, shell } from "electron";
+import log from "electron-log";
 import { join } from "path";
-import icon from "../../resources/icon.png?asset";
 
-
+let mainWindow: BrowserWindow | null = null;
+const iconPath = join(__dirname, "../../resources/icon.png");
 
 function createWindow(): void {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1280,
     height: 720,
     show: false,
     autoHideMenuBar: true,
-    ...(process.platform === "linux" ? { icon } : {}),
+    icon: iconPath,
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
-      webSecurity: false,
-      nodeIntegration: true,
-      contextIsolation: true
-    }
-  });
-  mainWindow.loadURL("http://localhost:3000")
-
-  ipcMain.handle("fetch-data", async () => {
-    try {
-      const response = await axios.get("http://localhost:5001/api");
-      return response.data;
-    } catch (error) {
-      console.error("Erro na requisição:", error);
-      return { error: "Falha ao buscar os dados" };
-    }
+      webSecurity: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
   });
 
-  mainWindow.on("ready-to-show", () => {
-    mainWindow.show();
+  mainWindow.once("ready-to-show", () => {
+    mainWindow?.show();
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -42,9 +32,21 @@ function createWindow(): void {
     return { action: "deny" };
   });
 
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
+  app.setUserTasks([
+    {
+      program: process.execPath,
+      arguments: "--new-upload",
+      iconPath: process.execPath,
+      iconIndex: 0,
+      title: "Novo upload",
+      description: "Criar um novo upload",
+    },
+  ]);
+
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
     mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
   } else {
@@ -52,40 +54,45 @@ function createWindow(): void {
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+ipcMain.handle("fetch-data", async () => {
+  try {
+    const response = await axios.get("http://localhost:5001/api");
+    return response.data;
+  } catch (error) {
+    log.error("Erro na requisição:", error);
+    return { error: "Falha ao buscar os dados" };
+  }
+});
+
+// Evento global de erro
+process.on("uncaughtException", (error) => {
+  log.error("Erro não tratado:", error);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  log.warn("Promessa rejeitada sem tratamento:", promise, "Razão:", reason);
+});
+
+// Inicialização do app
 app.whenReady().then(() => {
-  // Set app user model id for windows
   electronApp.setAppUserModelId("com.electron");
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on("browser-window-created", (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  // IPC test
-  ipcMain.on("ping", () => console.log("pong"));
+  ipcMain.on("ping", () => log.info("pong"));
 
   createWindow();
 
-  app.on("activate", function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// Sair do app quando todas as janelas forem fechadas (exceto no macOS)
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     app.quit();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
