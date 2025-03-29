@@ -55,7 +55,7 @@ export const renderItemPreview = (item: CardItem) => {
       return (
         <div className="item-preview-container">
           <div className="file-preview">
-            <div className="file-icon">📁</div>
+            <div className="file-icon">📄</div>
           </div>
           <div className="item-title">{item.title}</div>
         </div>

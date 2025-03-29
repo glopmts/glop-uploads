@@ -16,6 +16,7 @@ type MenuProps = {
   onTypeChange: (e: ChangeEvent<HTMLSelectElement>) => void;
   selectedType: ItemType;
   itemTypes: ItemType[];
+  errorMessage?: string;
 };
 
 const NewsFolderMenu: FC<MenuProps> = ({
@@ -29,6 +30,7 @@ const NewsFolderMenu: FC<MenuProps> = ({
   onSubmit,
   onColorChange,
   onTypeChange,
+  errorMessage
 }) => {
   return (
     <Modal
@@ -75,6 +77,10 @@ const NewsFolderMenu: FC<MenuProps> = ({
             <span className="color-preview" style={{ backgroundColor: color }} />
           </div>
         </div>
+      </div>
+
+      <div className="news-folder__error-message">
+        <span>{errorMessage}</span>
       </div>
 
       <div className="news-upload__modal-actions">

@@ -1,7 +1,7 @@
 import { FileIcon, FileMediaIcon, ImageIcon, UploadIcon, VideoIcon, XIcon } from "@primer/octicons-react"
 import { Button } from "@renderer/components/button/button"
 import { Input } from "@renderer/components/input/input"
-import LoadingButtons from "@renderer/components/loading-buttons/loading-buttons"
+import LaodingButtons from "@renderer/components/loading-buttons/loading-buttons"
 import { Modal } from "@renderer/components/modal/modal"
 import { useAuth } from "@renderer/hooks/useAuth"
 import { ServicesFiles } from "@renderer/services/files-uploads"
@@ -256,7 +256,9 @@ const NewsUploadFiles: FC = () => {
                 onClick={handleSubmit}
               >
                 {isUploading ? (
-                  <LoadingButtons />
+                  <div className="">
+                    <LaodingButtons />
+                  </div>
                 ) : (
                   "Fazer upload"
                 )}

@@ -34,4 +34,15 @@
     cursor: pointer;
     border-radius: g.$border-radius-lg;
   }
+
+  &__error-message {
+    padding-top: g.$spacing-lg;
+    margin-bottom: g.$spacing-lg;
+
+    span {
+      color: g.$error-color;
+      font-style: normal;
+      font-size: g.$font-size-md;
+    }
+  }
 }

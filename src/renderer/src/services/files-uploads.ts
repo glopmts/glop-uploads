@@ -1,7 +1,6 @@
 import axios, { type AxiosError, type AxiosRequestConfig } from "axios"
+import { API_BASE_URL } from "../lib/api_url"
 import type { ItemType } from "../types/interfaces"
-
-const API_BASE_URL = "http://localhost:5001/api"
 
 interface ErrorResponse {
   message: string

@@ -19,8 +19,12 @@ const Home: FC = () => (
             <NewsUploadFiles />
           </div>
         </div>
-        <UserFolders />
-        <CardsUpload />
+        <div className="">
+          <UserFolders />
+        </div>
+        <div className="">
+          <CardsUpload />
+        </div>
       </div>
     </main>
   </section>

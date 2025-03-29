@@ -14,6 +14,7 @@ interface ItemViewerProps {
 const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setIsLoading(true)
@@ -24,11 +25,29 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
     return () => clearTimeout(timer)
   }, [item])
 
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.focus()
+    }
+  }, [])
+
   if (!item) return null
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
       onClose()
+    }
+  }
+
+  const handleDownload = () => {
+    if (item.path) {
+      // Create a temporary anchor element to trigger download
+      const link = document.createElement("a")
+      link.href = item.path
+      link.download = item.title || "download"
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     }
   }
 
@@ -68,7 +87,7 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
             {isLoading && <div className="loading-spinner"></div>}
             <iframe
               src={item.path}
-              title={item.title}
+              title={item.title || "Document"}
               onLoad={() => setIsLoading(false)}
               style={{ display: isLoading ? "none" : "block" }}
             />
@@ -104,11 +123,11 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
   }
 
   return (
-    <div className="item-viewer-overlay" onClick={onClose} onKeyDown={handleKeyDown} tabIndex={0}>
+    <div className="item-viewer-overlay" onClick={onClose} onKeyDown={handleKeyDown} tabIndex={0} ref={containerRef}>
       <div className="item-viewer-container" onClick={(e) => e.stopPropagation()}>
         <div className="viewer-header">
           <h3>{item.title}</h3>
-          <button className="close-button" onClick={onClose}>
+          <button className="close-button" onClick={onClose} aria-label="Fechar">
             <X size={24} />
           </button>
         </div>
@@ -117,10 +136,16 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
           <div className="item-details">
             <span>Tipo: {item.type}</span>
             <span>Tamanho: {item.size}</span>
+            <span>Data Upload: {item.createdAt ? (
+              new Date(item.createdAt).toLocaleDateString()
+            ) : (
+              "Data Invalida"
+            )}</span>
           </div>
-          <div className="">
-            <Button theme="outline">
+          <div className="download-button">
+            <Button theme="outline" onClick={handleDownload}>
               <Download size={20} />
+              <span className="sr-only">Download</span>
             </Button>
           </div>
         </div>

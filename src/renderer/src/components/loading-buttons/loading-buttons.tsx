@@ -4,7 +4,7 @@ import "./loading-buttons.scss";
 const LaodingButtons: FC = () => {
   return (
     <div className="loading-buttons-container">
-      <div className="loading-buttons-spinner"></div>
+      <div className="loading-spinner-buttons"></div>
     </div>
   );
 }

@@ -1,93 +1,65 @@
-// FolderId.tsx
-import { CardItem, Folder } from "@renderer/types/interfaces"
+import ItemViewer from "@renderer/components/folders/ItemViewer/ItemViewer"
+import { useAuth } from "@renderer/hooks/useAuth"
+import { itemUploadsUser } from "@renderer/services/items-uploads"
+import type { CardItem, Folder } from "@renderer/types/interfaces"
 import { type FC, useEffect, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import "./itens.scss"
-import { renderItemPreview } from "./renderItems"
+import { renderItemPreview } from "./render-items"
 
 const FolderId: FC = () => {
+  const { userId } = useAuth()
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const id = searchParams.get("id")
   const name = searchParams.get("name") || "Pasta"
-  const [currentFolder, setCurrentFolder] = useState<Folder | null>(null)
+  const type = searchParams.get("type")
+  const [folders, setFolders] = useState<Folder[]>([])
+  const [items, setItems] = useState<CardItem[]>([])
   const [selectedItem, setSelectedItem] = useState<CardItem | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Simulação de busca dos dados da pasta
   useEffect(() => {
-    // Aqui você faria uma chamada API ou buscaria do estado global
-    // Estou simulando com um timeout
-    const timer = setTimeout(() => {
-      const mockFolders: Folder[] = [
-        {
-          id: "pasta1",
-          title: "Images",
-          color: "#dc2626",
-          type: "folder",
-          isFolder: true,
-          path: "",
-          size: "20mb",
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          items: [
-            {
-              id: "subpasta1",
-              title: "Vacation",
-              type: "folder",
-              color: "#f59e0b",
-              isFolder: true,
-              path: "",
-              size: "10mb",
-              createdAt: new Date(),
-              updatedAt: new Date(),
-              items: [
-                {
-                  id: "img1",
-                  title: "Beach.jpg",
-                  type: "image",
-                  path: "",
-                  size: "2mb",
-                  createdAt: new Date(),
-                  updatedAt: new Date(),
-                },
-              ]
-            },
-            {
-              id: "img1",
-              title: "Beach.jpg",
-              type: "image",
-              path: "",
-              size: "2mb",
-              createdAt: new Date(),
-              updatedAt: new Date(),
-            },
-          ],
-        },
-      ]
+    const fetchData = async () => {
+      if (!userId || !type) {
+        setIsLoading(false)
+        return
+      }
+      try {
+        setIsLoading(true)
+        const res = await itemUploadsUser.getUploadsFolder(userId, type)
+        setFolders(res.folders || [])
+        setItems(res.items || [])
+      } catch (error) {
+        console.error("Erro ao buscar a pasta:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
 
-      const folder = mockFolders.find(f => f.id === id) || null
-      setCurrentFolder(folder)
-    }, 300)
-
-    return () => clearTimeout(timer)
-  }, [id])
+    fetchData()
+  }, [userId, type, id])
 
   const handleItemClick = (item: CardItem) => {
     if (item.type === "folder") {
-      navigate(`/folder?id=${item.id}&name=${encodeURIComponent(`${name}/${item.title}`)}`)
+      navigate(`/folder?id=${item.id}&name=${encodeURIComponent(`${name}/${item.title}`)}&type=${item.type}`)
     } else {
       setSelectedItem(item)
     }
+  }
+
+  const closeViewer = () => {
+    setSelectedItem(null)
   }
 
   const pathSegments = name.split("/").filter(Boolean)
 
   return (
     <section className="itens-id__container">
-      <nav className="itens-id__breadcrumb">
+      <nav className="itens-id__breadcrumb" aria-label="Navegação">
         <Link to="/">Home</Link>
         {pathSegments.map((segment, index) => {
-          const path = `/folder?id=${id}&name=${pathSegments.slice(0, index + 1).join("/")}`
+          const path = `/folder?id=${id}&name=${encodeURIComponent(pathSegments.slice(0, index + 1).join("/"))}&type=${type}`
           return (
             <span key={index}>
               <span className="itens-id__breadcrumb-separator">{">"}</span>
@@ -98,30 +70,65 @@ const FolderId: FC = () => {
       </nav>
 
       <div className="itens-id__infor-details">
-        {currentFolder ? (
-          <ul className="itens-id__ul">
-            {currentFolder.items.map((item) => (
-              <li
-                key={item.id}
-                className="itens-id__card"
-                onClick={() => handleItemClick(item)}
-              >
-                {renderItemPreview(item)}
-              </li>
-            ))}
-          </ul>
+        {isLoading ? (
+          <div className="itens-id__loading">Carregando...</div>
         ) : (
-          <div className="itens-id__not-found">
-            <span className="itens-id__text-not">Carregando pasta...</span>
-          </div>
-        )}
+          <>
+            {folders.length > 0 && (
+              <>
+                <h2>Pastas</h2>
+                <ul className="itens-id__ul">
+                  {folders.map((folder) => (
+                    <li
+                      key={folder.id}
+                      className="itens-id__card"
+                      onClick={() => navigate(`/folder?id=${folder.id}&name=${encodeURIComponent(folder.title)}&type=${folder.type}`)}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Pasta ${folder.title}`}
+                      onKeyDown={(e) => e.key === 'Enter' && navigate(`/folder?id=${folder.id}&name=${encodeURIComponent(folder.title)}&type=${folder.type}`)}
+                    >
+                      <div className="item-preview-container folder">
+                        <div className="folder-preview">📁</div>
+                        <div className="item-title">{folder.title}</div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
 
-        {currentFolder?.items.length === 0 && (
-          <div className="itens-id__not-found">
-            <span className="itens-id__text-not">Pasta vazia</span>
-          </div>
+            {items.length > 0 ? (
+              <>
+                <h2>Itens</h2>
+                <ul className="itens-id__ul">
+                  {items.map((item) => (
+                    <li
+                      key={item.id}
+                      className="itens-id__card"
+                      onClick={() => handleItemClick(item)}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Item ${item.title}`}
+                      onKeyDown={(e) => e.key === 'Enter' && handleItemClick(item)}
+                    >
+                      {renderItemPreview(item)}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <div className="itens-id__not-found">
+                <span className="itens-id__text-not">Nenhum item encontrado</span>
+              </div>
+            )}
+          </>
         )}
       </div>
+
+      {selectedItem && (
+        <ItemViewer item={selectedItem} onClose={closeViewer} />
+      )}
     </section>
   )
 }

@@ -14,7 +14,6 @@ interface FolderItemProps {
 
 const itemTypes: ItemType[] = ["file", "image", "video", "audio", "document"];
 
-// Função auxiliar para renderizar ícone
 const getIconByType = (type: ItemType) => {
   const icons: Record<ItemType, JSX.Element> = {
     folder: <FolderIcon size={18} />,
@@ -31,7 +30,7 @@ const getIconByType = (type: ItemType) => {
 const formatDate = (date: string | Date) => {
   const parsedDate = new Date(date);
   if (isNaN(parsedDate.getTime())) {
-    return "Data inválida"; // Retorne algo adequado em caso de erro de data
+    return "Data inválida";
   }
   return new Intl.DateTimeFormat("pt-BR", {
     day: "2-digit",
@@ -75,8 +74,8 @@ const FolderItem: FC<FolderItemProps> = ({ folder }) => {
   }, []);
 
   const handleNavigate = useCallback(() => {
-    navigate({ pathname: "/folder", search: `?id=${folder.id}&name=${folder.title}` });
-  }, [navigate, folder.id, folder.title]);
+    navigate({ pathname: "/folder", search: `?id=${folder.id}&name=${folder.title}&type=${folder.type}` });
+  }, [navigate, folder.id, folder.title, folder.type]);
 
   const folderStyle = useMemo(() => ({ backgroundColor: folder.color || "#27272a" }), [folder.color]);
 

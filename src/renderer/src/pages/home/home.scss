@@ -3,7 +3,7 @@
 .home {
   &__content {
     width: 100%;
-    height: 100%;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     background-color: globals.$background-color;
@@ -29,6 +29,7 @@
     padding: globals.$spacing-unit * 2;
     overflow: auto;
     width: 100%;
+    height: 100%;
   }
 
   &__buttons {

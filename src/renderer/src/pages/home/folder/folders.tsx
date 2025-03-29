@@ -2,7 +2,7 @@ import type React from "react"
 
 import MenuFolder from "@renderer/components/folders/menu-folrders/menu-folders"
 import NewsFolderMenu from "@renderer/components/folders/news-folder-menu/news-folder-menu"
-import Loading from "@renderer/components/loading/loading"
+import { LoadingSpinner } from "@renderer/components/loading-spinner/loading-spinner"
 import { useAuth } from "@renderer/hooks/useAuth"
 import { foldersServices } from "@renderer/services/folders"
 import type { CardItem, Folder, ItemType } from "@renderer/types/interfaces"
@@ -117,7 +117,13 @@ const UserFolders: FC = () => {
       <h3 className="folders__h3">Pastas</h3>
 
       {isLoading ? (
-        <Loading />
+        <LoadingSpinner
+          size="small"
+          color="#6200ee"
+          thickness={6}
+          speed="fast"
+          text="Processing..."
+        />
       ) : error ? (
         <div className="erro">
           <span className="erro__message">{error}</span>
@@ -139,6 +145,7 @@ const UserFolders: FC = () => {
         onColorChange={(e) => setNewFolderData({ ...newFolderData, color: e.target.value })}
         onTypeChange={(e) => setNewFolderData({ ...newFolderData, type: e.target.value as ItemType })}
         onSubmit={handleCreateFolder}
+        errorMessage={errorMessage!}
       />
 
       {sectionContextMenu && (

@@ -1,9 +1,114 @@
-@use "../../../scss/globals.scss";
+@use "../../../scss/globals.scss" as g;
 
-.file-manager {
-  display: flex;
-  height: 100vh;
+.erro {
   width: 100%;
-  background-color: globals.$background-color;
-  color: globals.$muted-color;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &__message {
+    color: g.$error-color;
+    font-weight: 700;
+    font-size: g.$font-size-lg;
+  }
+}
+
+.loading-cards {
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: g.$background-color;
+}
+
+.files {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    background-color: g.$background-color;
+    color: g.$muted-color;
+  }
+
+  &__title {
+    padding-bottom: g.$spacing-md;
+    padding-top: g.$spacing-md;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      color: g.$hs-color;
+    }
+  }
+
+  &__options {
+    padding: 10px;
+  }
+
+  &__button-refetch {
+    width: 10px;
+    cursor: pointer;
+    color: g.$hs-color;
+  }
+
+  &__button-refetch--spinning .files__refetch-icons {
+    animation: spin 1s linear infinite;
+  }
+
+  &__cards {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.itens-id {
+  &__ul {
+    display: grid;
+    flex-wrap: wrap;
+    gap: g.$spacing-md;
+    list-style: none;
+    padding: 0;
+  }
+
+  &__card {
+    cursor: pointer;
+    border-radius: g.$border-radius-md;
+    background-color: g.$card-bg;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: g.$card-hover;
+    }
+
+    &:focus {
+      outline: 2px solid g.$primary;
+    }
+  }
+
+  &__not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: g.$spacing-lg;
+  }
+
+  &__text-not {
+    color: g.$text-muted;
+    font-size: g.$font-size-md;
+  }
 }

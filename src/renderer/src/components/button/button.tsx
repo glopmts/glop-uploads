@@ -10,7 +10,6 @@ export interface ButtonProps
   theme?: "primary" | "outline" | "dark" | "danger";
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function Button({
   children,
   theme = "primary",

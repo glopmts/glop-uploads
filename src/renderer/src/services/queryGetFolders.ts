@@ -1,9 +1,7 @@
 import { QueryClient, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { API_BASE_URL } from "../lib/api_url";
 
-const API_BASE_URL = "http://localhost:5001/api";
-
-// Função para pré-carregar os dados
 export const prefetchFolders = async (queryClient: QueryClient, userId: string) => {
   if (!userId) return;
   
