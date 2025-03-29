@@ -97,7 +97,7 @@ const NewsUploadFiles: FC = () => {
         formData.append('type', selectedType);
         formData.append('file', selectedFiles[0]);
 
-        await ServicesFiles.uploadFile(userId, title, selectedType, selectedFiles[0], (progress) => {
+        await ServicesFiles.uploadFile(userId, title, selectedType, undefined, selectedFiles[0], (progress) => {
           setUploadProgress(progress);
         });
       } else {
