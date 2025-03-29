@@ -53,6 +53,134 @@
     }
   }
 
+  &__dropzone {
+    border: 2px dashed g.$input-border;
+    border-radius: g.$border-radius;
+    padding: g.$spacing-lg;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: g.$primary;
+      background-color: rgba(g.$primary, 0.05);
+    }
+
+    &--active {
+      border-color: g.$primary;
+      background-color: rgba(g.$primary, 0.1);
+    }
+  }
+
+  &__dropzone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: g.$spacing-sm;
+    color: g.$hs-color;
+
+    p {
+      margin: 0;
+      font-size: g.$font-size-md;
+    }
+
+    span {
+      font-size: g.$font-size-sm;
+      color: g.$text-muted;
+    }
+  }
+
+  &__file-input {
+    display: none;
+  }
+
+  &__selected-files {
+    display: flex;
+    flex-direction: column;
+    gap: g.$spacing-sm;
+  }
+
+  &__files-list {
+    display: flex;
+    flex-direction: column;
+    gap: g.$spacing-xs;
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: g.$spacing-xs;
+  }
+
+  &__file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: g.$spacing-xs g.$spacing-sm;
+    border-radius: g.$border-radius;
+    background-color: g.$input-bg;
+    border: 1px solid g.$input-border;
+  }
+
+  &__file-info {
+    display: flex;
+    align-items: center;
+    gap: g.$spacing-sm;
+    overflow: hidden;
+  }
+
+  &__file-name {
+    font-size: g.$font-size-sm;
+    color: g.$hs-color;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+
+  &__file-size {
+    font-size: g.$font-size-xs;
+    color: g.$text-muted;
+  }
+
+  &__remove-file {
+    background: none;
+    border: none;
+    color: g.$text-muted;
+    cursor: pointer;
+    padding: g.$spacing-xs;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: g.$danger;
+      background-color: rgba(g.$danger, 0.1);
+    }
+  }
+
+  &__progress {
+    width: 100%;
+    height: 8px;
+    background-color: g.$input-bg;
+    border-radius: g.$border-radius;
+    overflow: hidden;
+    position: relative;
+    margin-top: g.$spacing-sm;
+
+    span {
+      position: absolute;
+      right: 0;
+      top: -18px;
+      font-size: g.$font-size-xs;
+      color: g.$text-muted;
+    }
+  }
+
+  &__progress-bar {
+    height: 100%;
+    background-color: g.$primary;
+    transition: width 0.3s ease;
+  }
+
   &__modal-actions {
     display: flex;
     justify-content: flex-end;

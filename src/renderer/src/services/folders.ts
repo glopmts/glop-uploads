@@ -3,7 +3,6 @@ import { ItemType } from '../types/interfaces';
 
 const API_BASE_URL = 'http://localhost:5001/api';
 
-
 interface ErrorResponse {
   message: string;
 }

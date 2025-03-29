@@ -25,7 +25,6 @@ export default function useFoldersQuery(userId: string) {
       return data.data.folders || []; 
     },
     enabled: !!userId,
-    // Adicionar staleTime para evitar refetches desnecessários
-    staleTime: 1000 * 60 * 5, // 5 minutos
+    staleTime: 1000 * 60 * 5,
   });
 }
