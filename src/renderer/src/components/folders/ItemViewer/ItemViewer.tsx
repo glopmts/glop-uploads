@@ -1,8 +1,8 @@
 import type React from "react"
 
-import type { CardItem } from "@renderer/types/interfaces"
 import { type FC, useEffect, useRef, useState } from "react"
 import { Download, X } from "react-feather"
+import { CardItem } from "../../../types/interfaces"
 import { Button } from "../../button/button"
 import "./ItemViewer.scss"
 

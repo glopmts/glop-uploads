@@ -4,14 +4,7 @@
     "electron.vite.config.*",
     "src/main/**/*",
     "src/preload/**/*",
-    "src/renderer/src/hooks",
-    "src/global.d.ts",
-    "src/renderer/src/lib",
-    "src/renderer/src/types/*",
-    "src/renderer/src/context/*",
-    "src/api/*",
-    "src/renderer/src/components/**/*",
-    "src/renderer/src/services/*",
+    "src/types/**/*"
   ],
   "compilerOptions": {
     "composite": true,
