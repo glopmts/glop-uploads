@@ -10,6 +10,7 @@
     "src/renderer/src/types/*",
     "src/renderer/src/context/*",
     "src/api/*",
+    "src/renderer/src/components/**/*",
     "src/renderer/src/services/*",
   ],
   "compilerOptions": {

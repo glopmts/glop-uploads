@@ -50,13 +50,22 @@
   }
 
   &__button-refetch {
-    width: 10px;
+    background-color: transparent;
+    border: none;
     cursor: pointer;
-    color: g.$hs-color;
+    padding: 0;
+    outline: none;
   }
-
-  &__button-refetch--spinning .files__refetch-icons {
-    animation: spin 1s linear infinite;
+  
+  &__button-refetch--spinning {
+    animation: rotate 1s linear infinite;
+  }
+  
+  &__refetch-icons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: g.$hs-color;
   }
 
   &__cards {
