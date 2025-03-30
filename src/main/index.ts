@@ -14,6 +14,7 @@ import {
 import log from "electron-log";
 import { autoUpdater } from "electron-updater";
 import * as fs from "fs";
+import * as https from "https";
 import path, { join } from "path";
 
 let mainWindow: BrowserWindow | null = null;
@@ -33,7 +34,7 @@ function createWindow(): void {
       sandbox: false,
       webSecurity: true,
       nodeIntegration: false,
-      contextIsolation: true,
+      contextIsolation: false,
     },
   });
 
@@ -52,10 +53,6 @@ function createWindow(): void {
 
   mainWindow.on("closed", () => {
     mainWindow = null;
-  });
-
-  ipcMain.handle("download-file", async (_event, url, filename) => {
-    await downloadFile(url, filename);
   });
 
   app.setUserTasks([
@@ -164,73 +161,137 @@ ipcMain.on("send-notification", (_event, { title, body }) => {
 });
 
 //downloads files
+const activeDownloads = new Map<string, { cancel: () => void }>();
 
-const downloadFile = async (url: string, filename: string) => {
+const downloadFile = async (url: string, filename: string, id: string) => {
   try {
     const destPath = path.join(app.getPath("downloads"), filename);
-
     const writer = fs.createWriteStream(destPath);
 
+    // Configurações otimizadas para o Axios
     const response = await axios({
       url,
       method: "GET",
       responseType: "stream",
+      cancelToken: new axios.CancelToken((c) => {
+        activeDownloads.set(id, { cancel: c });
+      }),
+      timeout: 30000,
+      httpsAgent: new https.Agent({
+        keepAlive: true,
+        maxSockets: 6,
+        rejectUnauthorized: false,
+      }),
+      headers: {
+        Connection: "keep-alive",
+        "Accept-Encoding": "gzip, deflate, br",
+      },
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
     });
 
-    const totalLength = response.headers["content-length"];
+    const totalLength = parseInt(response.headers["content-length"]) || 0;
+    let downloaded = 0;
+    let lastProgressUpdate = 0;
+    const updateInterval = 100;
 
-    if (totalLength) {
-      let downloaded = 0;
+    response.data.on("data", (chunk: Buffer) => {
+      downloaded += chunk.length;
+      const now = Date.now();
+      if (
+        now - lastProgressUpdate > updateInterval ||
+        downloaded === totalLength
+      ) {
+        const progress = totalLength > 0 ? downloaded / totalLength : 0;
+        mainWindow?.webContents.send("download-progress", { id, progress });
+        lastProgressUpdate = now;
+      }
+    });
 
-      response.data.on("data", (chunk: Buffer) => {
-        downloaded += chunk.length;
-        const progress = downloaded / totalLength;
+    response.data.pipe(writer);
 
-        if (mainWindow) {
-          mainWindow.setProgressBar(progress);
-        }
-
-        // console.log(`Progresso: ${(progress * 100).toFixed(2)}%`);
-      });
-
-      response.data.pipe(writer);
+    return new Promise((resolve, reject) => {
       writer.on("finish", () => {
-        console.log("Download concluído!");
-
-        if (mainWindow) {
-          mainWindow.setProgressBar(0);
-        }
-
-        if (mainWindow) {
-          mainWindow.webContents.send("send-notification", {
-            title: "Download concluído!",
-            body: "Seu download foi concluído com sucesso!",
-          });
-        }
+        activeDownloads.delete(id);
+        mainWindow?.webContents.send("download-progress", { id, progress: 1 });
+        resolve(destPath);
       });
 
       writer.on("error", (err) => {
-        console.error("Erro no download:", err);
-        if (mainWindow) {
-          mainWindow.setProgressBar(0);
-        }
+        activeDownloads.delete(id);
+        reject(err);
       });
-    }
+    });
   } catch (error) {
-    console.error("Erro ao iniciar o download:", error);
-    if (mainWindow) {
-      mainWindow.setProgressBar(0);
-    }
+    activeDownloads.delete(id);
+    throw error;
   }
 };
 
-ipcMain.handle("select-download-folder", async () => {
-  const result = await dialog.showOpenDialog({
-    properties: ["openDirectory"],
-  });
+const downloadChunked = async (
+  url: string,
+  filename: string,
+  id: string,
+  chunkSize = 5242880
+) => {
+  try {
+    const destPath = path.join(app.getPath("downloads"), filename);
+    const writer = fs.createWriteStream(destPath);
 
-  return result.canceled ? null : result.filePaths[0];
-});
+    const headResponse = await axios.head(url);
+    const totalLength = parseInt(headResponse.headers["content-length"]) || 0;
+
+    if (totalLength === 0) {
+      throw new Error("Não foi possível determinar o tamanho do arquivo");
+    }
+
+    const chunks = Math.ceil(totalLength / chunkSize);
+    let downloaded = 0;
+
+    for (let i = 0; i < chunks; i++) {
+      if (activeDownloads.has(id)) {
+        const start = i * chunkSize;
+        const end = Math.min((i + 1) * chunkSize - 1, totalLength - 1);
+
+        const response = await axios({
+          url,
+          method: "GET",
+          responseType: "stream",
+          headers: {
+            Range: `bytes=${start}-${end}`,
+            Connection: "keep-alive",
+          },
+          cancelToken: new axios.CancelToken((c) => {
+            activeDownloads.set(id, { cancel: c });
+          }),
+        });
+
+        await new Promise((resolve, reject) => {
+          response.data.on("data", (chunk: Buffer) => {
+            downloaded += chunk.length;
+            const progress = downloaded / totalLength;
+            mainWindow?.webContents.send("download-progress", { id, progress });
+          });
+
+          response.data.pipe(writer, { end: false });
+
+          response.data.on("end", resolve);
+          response.data.on("error", reject);
+        });
+      } else {
+        throw new Error("Download cancelado");
+      }
+    }
+
+    writer.end();
+    activeDownloads.delete(id);
+    mainWindow?.webContents.send("download-progress", { id, progress: 1 });
+    return destPath;
+  } catch (error) {
+    activeDownloads.delete(id);
+    throw error;
+  }
+};
 
 ipcMain.on("start-download", async (_event, { url, folder }) => {
   const win = BrowserWindow.getAllWindows()[0];
@@ -264,6 +325,30 @@ ipcMain.on("start-download", async (_event, { url, folder }) => {
       }
     });
   });
+});
+
+ipcMain.handle("download-chunked", (_event, url, filename, id, chunkSize) => {
+  return downloadChunked(url, filename, id, chunkSize);
+});
+
+ipcMain.handle("download-file", (_event, url, filename, id) => {
+  return downloadFile(url, filename, id);
+});
+
+ipcMain.on("cancel-download", (_event, id) => {
+  if (activeDownloads.has(id)) {
+    activeDownloads.get(id)?.cancel();
+    activeDownloads.delete(id);
+    mainWindow?.webContents.send("download-progress", { id, progress: 0 });
+  }
+});
+
+ipcMain.handle("select-download-folder", async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ["openDirectory"],
+  });
+
+  return result.canceled ? null : result.filePaths[0];
 });
 
 // Evento global de erro

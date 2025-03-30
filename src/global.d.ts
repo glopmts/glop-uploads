@@ -13,9 +13,24 @@ declare global {
       }>;
     };
     electronAPI: {
+      downloadChunked(
+        path: string,
+        arg1: string,
+        downloadId: string,
+        arg3: number
+      ): unknown;
+      fetchData: () => Promise<{ data: string; error?: string }>;
       selectDownloadFolder: () => Promise<string | null>;
-      startDownload: (url: string) => void;
-      downloadFile: (url: string, filename: string) => void;
+      downloadFile: (
+        url: string,
+        filename: string,
+        id: string
+      ) => Promise<void>;
+      cancelDownload: (id: string) => void;
+      onDownloadProgress: (
+        callback: (data: { id: string; progress: number }) => void
+      ) => () => void;
+      sendNotification: (title: string, body: string) => void;
     };
   }
 }
