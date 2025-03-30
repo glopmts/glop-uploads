@@ -71,7 +71,9 @@ const FolderId: FC = () => {
 
       <div className="itens-id__infor-details">
         {isLoading ? (
-          <div className="itens-id__loading">Carregando...</div>
+          <div className="itens-id__loading">
+            <span>Carregando...</span>
+          </div>
         ) : (
           <>
             {folders.length > 0 && (

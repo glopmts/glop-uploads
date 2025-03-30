@@ -5,6 +5,7 @@ import LaodingButtons from "@renderer/components/loading-buttons/loading-buttons
 import { Modal } from "@renderer/components/modal/modal"
 import { useAuth } from "@renderer/hooks/useAuth"
 import { ServicesFiles } from "@renderer/services/files-uploads"
+import UserItemsQuery from "@renderer/services/queryUploads"
 import type { ItemType } from "@renderer/types/interfaces"
 import type React from "react"
 import { type FC, useCallback, useRef, useState } from "react"
@@ -20,6 +21,7 @@ const NewsUploadFiles: FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { refetch } = UserItemsQuery(userId!);
 
   const itemTypes: ItemType[] = ["file", "image", "video", "audio", "document"]
 
@@ -113,6 +115,7 @@ const NewsUploadFiles: FC = () => {
       }
 
       closeModal();
+      await refetch();
     } catch (error) {
       console.error("Upload failed:", error);
     } finally {

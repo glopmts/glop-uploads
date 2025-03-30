@@ -71,6 +71,18 @@
     }
   }
 
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      color: g.$hs-color;
+      font-size: g.$spacing-md;
+      animation:  pulse 2s cubic-bezier(0.4, 0, 0.6, 1);
+    }
+  }
+
   // Responsive grid layout
   &__ul {
     display: grid;
@@ -381,5 +393,13 @@
         background: rgba(255, 255, 255, 0.1);
       }
     }
+  }
+}
+
+//loading-keyframes{
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
   }
 }

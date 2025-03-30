@@ -1,7 +1,6 @@
+import { API_BASE_URL } from "@renderer/lib/api_url";
 import axios, { AxiosError } from "axios";
 import { ItemType } from "../types/interfaces";
-
-const API_BASE_URL = "http://localhost:5001/api";
 
 interface ErrorResponse {
   message: string;
