@@ -34,7 +34,7 @@ function createWindow(): void {
       sandbox: false,
       webSecurity: true,
       nodeIntegration: false,
-      contextIsolation: false,
+      contextIsolation: true,
     },
   });
 

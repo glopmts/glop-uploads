@@ -73,7 +73,7 @@
   }
 
   &__footer {
-    padding: 1rem;
+    padding: 0.4rem;
     border-top: 1px solid g.$border-color;
   }
 
@@ -90,6 +90,14 @@
     align-items: center;
     gap: g.$spacing-xs * 4;
     width: 100%;
+    transition: 300ms;
+    overflow: hidden;
+    padding: g.$spacing-sm;
+    border-radius: g.$spacing-md;
+
+    &:hover {
+     background-color: g.$card-bg; 
+    }
   }
 
   &__user-avatar {
@@ -119,6 +127,10 @@
     margin: 0;
     font-size: g.$font-size-md * 1.2;
     color: g.$muted-color;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__user-email {
@@ -132,7 +144,7 @@
     border: 1px solid g.$error-color;
     border-radius: 6px;
     color: g.$hs-color;
-    padding: 0.25rem 0.5rem;
+    padding: 0.5rem 0.8rem;
     cursor: pointer;
     margin-top: 0.5rem;
     width: 100%;
@@ -162,5 +174,53 @@
     padding: 1rem;
     text-align: center;
     color: #586069;
+  }
+
+  &__infor-use {
+    position: absolute;
+    background-color: g.$card-bg;
+    top: 60%;
+    z-index: 900;
+    right: 0;
+    left: 10%;
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    padding: g.$spacing-sm;
+    flex-direction: column;
+    border-color: g.$border-color;
+    border: 1px solid;
+    border-radius: g.$border-radius-md * 2;
+  }
+
+  &__user-info-user-modal {
+    display: flex;
+    align-items: flex-start;
+    gap: g.$spacing-sm;
+    padding-bottom: g.$spacing-md;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__user-email {
+    font-size: g.$font-size-sm;
+    overflow: hidden;
+    width: 100%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__logout {
+    display: flex;
+    top: 0;
+    border-bottom: 0 ;
+    align-items: end;
+    justify-items: end;
+    padding-bottom: g.$spacing-sm;
   }
 }

@@ -31,7 +31,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </Routes>
           </QueryClientProvider>
         </DndProviderWrapper>
-
       </AuthProvider>
     </HashRouter>
   </React.StrictMode>,

@@ -33,7 +33,7 @@ export const renderContent = ({
           <video
             ref={videoRef}
             controls
-            autoPlay
+            autoPlay={false}
             onLoadedData={() => setIsLoading(false)}
             style={{ display: isLoading ? "none" : "block" }}
           >
