@@ -171,10 +171,43 @@
     }
 
     .download-button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
       button {
         display: flex;
         align-items: center;
         gap: 8px;
+      }
+      
+      .download-progress {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 200px;
+        
+        .progress-bar {
+          flex: 1;
+          height: 8px;
+          background-color: rgba(g.$text-secondary, 0.2);
+          border-radius: 4px;
+          overflow: hidden;
+          
+          .progress-fill {
+            height: 100%;
+            background-color: g.$link-color;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+          }
+        }
+        
+        .progress-text {
+          font-size: 14px;
+          color: g.$text-secondary;
+          min-width: 40px;
+          text-align: right;
+        }
       }
     }
   }
@@ -242,6 +275,14 @@
     flex-direction: column;
     gap: 5px;
   }
+  
+  .viewer-footer .download-button {
+    flex-direction: column;
+  }
+  
+  .download-progress {
+    min-width: 150px !important;
+  }
 }
 
 // Electron-specific optimizations for dark mode
@@ -264,5 +305,9 @@
   .loading-spinner {
     border-color: rgba(255, 255, 255, 0.2);
     border-top-color: #3b82f6;
+  }
+  
+  .progress-bar {
+    background-color: rgba(255, 255, 255, 0.2) !important;
   }
 }

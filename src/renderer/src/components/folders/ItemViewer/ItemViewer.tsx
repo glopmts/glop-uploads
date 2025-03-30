@@ -1,7 +1,9 @@
 import type React from "react"
 
+import { DownloadIcon } from "@primer/octicons-react"
+import { useToastNotification } from "@renderer/hooks/useToastNotification"
 import { type FC, useEffect, useRef, useState } from "react"
-import { Download, X } from "react-feather"
+import { Download, StopCircle, X } from "react-feather"
 import { CardItem } from "../../../types/interfaces"
 import { Button } from "../../ui/button/button"
 import "./ItemViewer.scss"
@@ -14,7 +16,10 @@ interface ItemViewerProps {
 const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [downloadProgress, setDownloadProgress] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
+  const toast = useToastNotification();
 
   useEffect(() => {
     setIsLoading(true)
@@ -24,12 +29,6 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
 
     return () => clearTimeout(timer)
   }, [item])
-
-  useEffect(() => {
-    if (containerRef.current) {
-      containerRef.current.focus()
-    }
-  }, [])
 
   if (!item) return null
 
@@ -42,21 +41,25 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
   const handleDownload = async () => {
     if (!item.path) return;
 
-    if (item.path) {
+    try {
+      setIsDownloading(true);
+      toast.warning("Download iniciado!");
+
       await window.electronAPI.downloadFile(item.path, item.title || "downloaded_file");
+    } catch (error) {
+      setIsDownloading(false);
+      setDownloadProgress(0);
+      toast.error("Erro ao iniciar o download");
+      console.error("Erro no download:", error);
     }
   };
 
+  const handleCancelDownload = () => {
+
+  };
+
   const handleDownload2 = () => {
-    if (item.path) {
-      // Create a temporary anchor element to trigger download
-      const link = document.createElement("a")
-      link.href = item.path
-      link.download = item.title || "download"
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    }
+
   }
 
   const renderContent = () => {
@@ -151,14 +154,34 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
             )}</span>
           </div>
           <div className="download-button">
-            <Button theme="outline" onClick={handleDownload}>
-              <Download size={20} />
-              <span className="sr-only">Download</span>
-            </Button>
-            <Button theme="outline" onClick={handleDownload2}>
-              <Download size={20} />
-              <span className="sr-only">Opção 2</span>
-            </Button>
+            {isDownloading ? (
+              <>
+                <div className="download-progress">
+                  <div className="progress-bar">
+                    <div
+                      className="progress-fill"
+                      style={{ width: `${downloadProgress * 100}%` }}
+                    ></div>
+                  </div>
+                  <span className="progress-text">{Math.round(downloadProgress * 100)}%</span>
+                </div>
+                <Button theme="danger" onClick={handleCancelDownload}>
+                  <StopCircle size={20} />
+                  <span>Cancelar</span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button theme="outline" onClick={handleDownload}>
+                  <Download size={20} />
+                  <span>Download</span>
+                </Button>
+                <Button theme="outline" onClick={handleDownload2}>
+                  <DownloadIcon size={20} />
+                  <span>Download Alternativo</span>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -167,4 +190,3 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
 }
 
 export default ItemViewer
-
