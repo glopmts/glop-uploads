@@ -1,7 +1,8 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import axios from "axios";
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, shell } from "electron";
 import log from "electron-log";
+import { autoUpdater } from "electron-updater";
 import { join } from "path";
 
 let mainWindow: BrowserWindow | null = null;
@@ -21,6 +22,10 @@ function createWindow(): void {
       nodeIntegration: false,
       contextIsolation: true,
     },
+  });
+
+  mainWindow.webContents.once("did-finish-load", () => {
+    autoUpdater.checkForUpdatesAndNotify();
   });
 
   mainWindow.once("ready-to-show", () => {
@@ -53,6 +58,29 @@ function createWindow(): void {
     mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
   }
 }
+
+autoUpdater.on("update-available", () => {
+  dialog.showMessageBox({
+    type: "info",
+    title: "Atualização disponível",
+    message: "Uma nova versão está disponível. Baixando...",
+  });
+});
+
+autoUpdater.on("update-downloaded", () => {
+  dialog
+    .showMessageBox({
+      type: "info",
+      title: "Atualização pronta",
+      message: "A nova versão foi baixada. Deseja reiniciar agora?",
+      buttons: ["Sim", "Mais tarde"],
+    })
+    .then((result) => {
+      if (result.response === 0) {
+        autoUpdater.quitAndInstall();
+      }
+    });
+});
 
 ipcMain.handle("fetch-data", async () => {
   try {
