@@ -1,7 +1,4 @@
 import { FileIcon, FileMediaIcon, ImageIcon, UploadIcon, VideoIcon, XIcon } from "@primer/octicons-react"
-import { Button } from "@renderer/components/button/button"
-import { Input } from "@renderer/components/input/input"
-import LaodingButtons from "@renderer/components/loading-buttons/loading-buttons"
 import { Modal } from "@renderer/components/modal/modal"
 import { useAuth } from "@renderer/hooks/useAuth"
 import { ServicesFiles } from "@renderer/services/files-uploads"
@@ -9,6 +6,9 @@ import UserItemsQuery from "@renderer/services/queryUploads"
 import type { ItemType } from "@renderer/types/interfaces"
 import type React from "react"
 import { type FC, useCallback, useRef, useState } from "react"
+import { Button } from "../../../components/ui/button/button"
+import { Input } from "../../../components/ui/input/input"
+import LaodingButtons from "../../../components/ui/loading-buttons/loading-buttons"
 import "./news-upload.scss"
 
 const NewsUploadFiles: FC = () => {
@@ -84,7 +84,6 @@ const NewsUploadFiles: FC = () => {
 
   const handleSubmit = async () => {
     if (!userId || !title || selectedFiles.length === 0) {
-      // Show error message
       return;
     }
 

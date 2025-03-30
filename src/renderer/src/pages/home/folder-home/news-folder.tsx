@@ -1,12 +1,12 @@
 import { FoldIcon } from "@primer/octicons-react";
-import { Button } from "@renderer/components/button/button";
-import { Input } from "@renderer/components/input/input";
 import { Modal } from "@renderer/components/modal/modal";
 import { useAuth } from "@renderer/hooks/useAuth";
 import useFoldersQuery from "@renderer/services/queryGetFolders";
 import { ItemType } from "@renderer/types/interfaces";
 import { FC, useState } from "react";
-import LaodingButtons from "../../../components/loading-buttons/loading-buttons";
+import { Button } from "../../../components/ui/button/button";
+import { Input } from "../../../components/ui/input/input";
+import LaodingButtons from "../../../components/ui/loading-buttons/loading-buttons";
 import { foldersServices } from "../../../services/folders";
 import "./news-folder.scss";
 

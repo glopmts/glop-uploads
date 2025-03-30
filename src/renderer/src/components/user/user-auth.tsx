@@ -2,9 +2,9 @@ import type React from "react"
 
 import { useState } from "react"
 import { useAuth } from "../../hooks/useAuth"
-import { Button } from "../button/button"
-import { Input } from "../input/input"
 import { Modal } from "../modal/modal"
+import { Button } from "../ui/button/button"
+import { Input } from "../ui/input/input"
 import "./user.auth.scss"
 
 type ModalAuthProps = {

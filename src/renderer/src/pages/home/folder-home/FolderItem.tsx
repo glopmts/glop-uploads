@@ -1,6 +1,3 @@
-import { Button } from "@renderer/components/button/button";
-import { Input } from "@renderer/components/input/input";
-import LaodingButtons from "@renderer/components/loading-buttons/loading-buttons";
 import { Modal } from "@renderer/components/modal/modal";
 import { useToastNotification } from "@renderer/hooks/useToastNotification";
 import { ServicesFiles } from "@renderer/services/files-uploads";
@@ -11,6 +8,9 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "reac
 import { File, FileText, Folder as FolderIcon, Image, Music, Video } from "react-feather";
 import { useNavigate } from "react-router-dom";
 import MenuFolder from "../../../components/folders/menu-folrders/menu-folders";
+import { Button } from "../../../components/ui/button/button";
+import { Input } from "../../../components/ui/input/input";
+import LaodingButtons from "../../../components/ui/loading-buttons/loading-buttons";
 
 interface FolderItemProps {
   folder: Folder;

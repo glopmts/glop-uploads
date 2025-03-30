@@ -3,13 +3,15 @@ import { useEffect, useState, type FC } from "react"
 
 import MenuFolder from "@renderer/components/folders/menu-folrders/menu-folders"
 import NewsFolderMenu from "@renderer/components/folders/news-folder-menu/news-folder-menu"
-import { LoadingSpinner } from "@renderer/components/loading-spinner/loading-spinner"
 import { DndProviderWrapper } from "@renderer/context/DndContext"
 import { useAuth } from "@renderer/hooks/useAuth"
 import { useToastNotification } from "@renderer/hooks/useToastNotification"
 import { foldersServices } from "@renderer/services/folders"
 import type { CardItem, Folder, ItemType } from "@renderer/types/interfaces"
+import { motion } from "framer-motion"
+import { RefreshCcw } from "react-feather"
 import FileDragLayer from "../../../components/folders/FileDragLayer"
+import { LoadingSpinner } from "../../../components/ui/loading-spinner/loading-spinner"
 import useFoldersQuery from "../../../services/queryGetFolders"
 import FolderItem from "./FolderItem"
 import "./folders.scss"
@@ -24,6 +26,7 @@ const UserFolders: FC = () => {
   const toast = useToastNotification()
 
   const { data: folders = [], error, isLoading, refetch } = useFoldersQuery(userId!)
+  const [isRefetch, setRefecth] = useState(false)
 
   const [isFolderModalOpen, setIsFolderModalOpen] = useState(false)
   const [newFolderData, setNewFolderData] = useState({
@@ -75,6 +78,13 @@ const UserFolders: FC = () => {
 
   const closeSectionContextMenu = () => {
     setSectionContextMenu(null)
+  }
+
+  const handleRefetch = async () => {
+    setRefecth(true)
+    await refetch()
+    setRefecth(false)
+    setTimeout(() => setRefecth(false), 500)
   }
 
   const openFolderModal = (parentId: string | null = null) => {
@@ -157,7 +167,23 @@ const UserFolders: FC = () => {
   return (
     <DndProviderWrapper>
       <section className="folders__container" onContextMenu={handleSectionContextMenu}>
-        <h3 className="folders__h3">Pastas</h3>
+        <div className="folders__header">
+          <h3 className="folders__h3">Pastas</h3>
+          <div className="files__options">
+            <button
+              onClick={handleRefetch}
+              className={`files__button-refetch ${isRefetch ? "files__button-refetch--spinning" : ""}`}
+            >
+              <motion.div
+                animate={{ rotate: isRefetch ? 360 : 0 }}
+                transition={{ duration: 0.6, ease: "easeInOut", repeat: isRefetch ? Number.POSITIVE_INFINITY : 0 }}
+                className="files__refetch-icons"
+              >
+                <RefreshCcw size={17} />
+              </motion.div>
+            </button>
+          </div>
+        </div>
 
         {isLoading ? (
           <LoadingSpinner size="small" color="#6200ee" thickness={6} speed="fast" text="Processing..." />

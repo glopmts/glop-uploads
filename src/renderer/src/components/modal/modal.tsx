@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import "./modal.scss";
 
 import cn from "classnames";
-import { Backdrop } from "../backdrop/backdrop";
+import { Backdrop } from "../ui/backdrop/backdrop";
 
 export interface ModalProps {
   visible: boolean;

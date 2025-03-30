@@ -1,10 +1,10 @@
 import type { FC } from "react"
-import UserFolders from "./folder/folders"
-import NewsFolder from "./folder/news-folder"
+import UserFolders from "./folder-home/folders"
+import NewsFolder from "./folder-home/news-folder"
 import "./Home.scss"
+import CardsUpload from "./items-uploads/cards-upload"
 import NewsUploadFiles from "./news-upload/news-upload"
 import "./sidebar/siderbar.scss"
-import CardsUpload from "./uploads-cards/cards-upload"
 
 const Home: FC = () => (
   <section className="home__content">

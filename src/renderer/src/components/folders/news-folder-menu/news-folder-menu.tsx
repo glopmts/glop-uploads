@@ -1,8 +1,8 @@
-import { Button } from "@renderer/components/button/button";
-import { Input } from "@renderer/components/input/input";
 import { Modal } from "@renderer/components/modal/modal";
 import { ItemType } from "@renderer/types/interfaces";
 import { ChangeEvent, FC } from "react";
+import { Button } from "../../ui/button/button";
+import { Input } from "../../ui/input/input";
 import "./news-folder-menu.scss";
 
 type MenuProps = {

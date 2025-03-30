@@ -1,8 +1,6 @@
 import type React from "react"
 
 import ItemViewer from "@renderer/components/folders/ItemViewer/ItemViewer"
-import MenuItems from "@renderer/components/items/modal-items/menu-items"
-import { LoadingSpinner } from "@renderer/components/loading-spinner/loading-spinner"
 import { useAuth } from "@renderer/hooks/useAuth"
 import { useToastNotification } from "@renderer/hooks/useToastNotification"
 import { renderItemPreview } from "@renderer/pages/folder/render-items"
@@ -12,6 +10,8 @@ import type { CardItem } from "@renderer/types/interfaces"
 import { motion } from "framer-motion"
 import { useState, type FC } from "react"
 import { RefreshCcw } from "react-feather"
+import MenuItems from "../../../components/folders/items/modal-items/menu-items"
+import { LoadingSpinner } from "../../../components/ui/loading-spinner/loading-spinner"
 import "./cards-upload.scss"
 
 const CardsUpload: FC = () => {

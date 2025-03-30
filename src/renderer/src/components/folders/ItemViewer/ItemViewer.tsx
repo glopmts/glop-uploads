@@ -3,7 +3,7 @@ import type React from "react"
 import { type FC, useEffect, useRef, useState } from "react"
 import { Download, X } from "react-feather"
 import { CardItem } from "../../../types/interfaces"
-import { Button } from "../../button/button"
+import { Button } from "../../ui/button/button"
 import "./ItemViewer.scss"
 
 interface ItemViewerProps {
@@ -39,7 +39,15 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
     }
   }
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    if (!item.path) return;
+
+    if (item.path) {
+      await window.electronAPI.downloadFile(item.path, item.title || "downloaded_file");
+    }
+  };
+
+  const handleDownload2 = () => {
     if (item.path) {
       // Create a temporary anchor element to trigger download
       const link = document.createElement("a")
@@ -146,6 +154,10 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
             <Button theme="outline" onClick={handleDownload}>
               <Download size={20} />
               <span className="sr-only">Download</span>
+            </Button>
+            <Button theme="outline" onClick={handleDownload2}>
+              <Download size={20} />
+              <span className="sr-only">Opção 2</span>
             </Button>
           </div>
         </div>

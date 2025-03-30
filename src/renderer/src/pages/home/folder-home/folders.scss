@@ -20,9 +20,15 @@
     padding-top: g.$spacing-lg;
   }
 
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: g.$spacing-lg;
+  }
+
   &__h3 {
     color: g.$hs-color;
-    margin-bottom: g.$spacing-md;
     font-size: g.$font-size-lg;
   }
 
