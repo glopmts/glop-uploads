@@ -44,6 +44,56 @@ function createWindow(): void {
     autoUpdater.checkForUpdatesAndNotify();
   });
 
+  autoUpdater.on("update-available", ({ version, releaseNotes }) => {
+    log.info("Update available:", version);
+
+    dialog
+      .showMessageBox({
+        type: "info",
+        title: "Atualização Disponível",
+        message: `Uma nova versão (${version}) está disponível. Deseja baixar agora?`,
+        detail: typeof releaseNotes === "string" ? releaseNotes : undefined,
+        buttons: ["Baixar", "Mais tarde"],
+        defaultId: 0,
+        cancelId: 1,
+      })
+      .then((result) => {
+        if (result.response === 0) {
+          autoUpdater.downloadUpdate();
+        }
+      });
+  });
+
+  autoUpdater.on("error", (error) => {
+    log.error("Erro no auto updater:", error);
+
+    dialog.showMessageBox({
+      type: "error",
+      title: "Erro na Atualização",
+      message: "Ocorreu um erro ao verificar ou baixar atualizações",
+      detail: error.message,
+    });
+  });
+
+  autoUpdater.on("download-progress", (progress) => {
+    mainWindow?.webContents.send("update-progress", progress);
+  });
+
+  autoUpdater.on("update-downloaded", () => {
+    dialog
+      .showMessageBox({
+        type: "info",
+        title: "Atualização pronta",
+        message: "A nova versão foi baixada. Deseja reiniciar agora?",
+        buttons: ["Sim", "Mais tarde"],
+      })
+      .then((result) => {
+        if (result.response === 0) {
+          autoUpdater.quitAndInstall();
+        }
+      });
+  });
+
   mainWindow.once("ready-to-show", () => {
     mainWindow?.show();
   });
@@ -56,17 +106,6 @@ function createWindow(): void {
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
-
-  app.setUserTasks([
-    {
-      program: process.execPath,
-      arguments: "--new-upload",
-      iconPath: process.execPath,
-      iconIndex: 0,
-      title: "Novo upload",
-      description: "Criar um novo upload",
-    },
-  ]);
 
   if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
     mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
@@ -132,7 +171,7 @@ function createTray() {
     },
   ]);
 
-  tray.setToolTip("Meu App Electron");
+  tray.setToolTip("GlopUploads");
   tray.setContextMenu(contextMenu);
 
   tray.on("click", () => {
@@ -147,29 +186,6 @@ function createTray() {
     }
   });
 }
-
-autoUpdater.on("update-available", () => {
-  dialog.showMessageBox({
-    type: "info",
-    title: "Atualização disponível",
-    message: "Uma nova versão está disponível. Baixando...",
-  });
-});
-
-autoUpdater.on("update-downloaded", () => {
-  dialog
-    .showMessageBox({
-      type: "info",
-      title: "Atualização pronta",
-      message: "A nova versão foi baixada. Deseja reiniciar agora?",
-      buttons: ["Sim", "Mais tarde"],
-    })
-    .then((result) => {
-      if (result.response === 0) {
-        autoUpdater.quitAndInstall();
-      }
-    });
-});
 
 //ouvintes de eventos
 
@@ -193,6 +209,22 @@ ipcMain.on("send-notification", (_event, { title, body }) => {
     console.log("Notificação enviada com sucesso");
   } catch (error) {
     console.error("Erro ao mostrar notificação:", error);
+  }
+});
+
+ipcMain.handle("check-for-updates", async () => {
+  try {
+    const result = await autoUpdater.checkForUpdates();
+    return {
+      success: true,
+      version: result?.updateInfo.version,
+    };
+  } catch (error) {
+    log.error("Erro ao verificar atualizações:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Erro desconhecido",
+    };
   }
 });
 

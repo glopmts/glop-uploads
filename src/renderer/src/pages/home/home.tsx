@@ -1,3 +1,4 @@
+import { UpdateChecker } from "@renderer/updates/updates"
 import type { FC } from "react"
 import UserFolders from "./folder-home/folders"
 import NewsFolder from "./folder-home/news-folder"
@@ -11,6 +12,7 @@ const Home: FC = () => (
     <main className="home__main">
       <header className="home__header">
         <h1>Bem vindo(a)</h1>
+        <UpdateChecker />
       </header>
       <div className="home__body">
         <div className="home__buttons">
@@ -22,9 +24,7 @@ const Home: FC = () => (
         <div className="">
           <UserFolders />
         </div>
-        <div className="">
-          <CardsUpload />
-        </div>
+        <CardsUpload />
       </div>
     </main>
   </section>

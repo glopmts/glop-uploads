@@ -1,25 +1,32 @@
-export type ItemType = "image" | "file" | "video" | "audio" | "document" | "folder"
+export type ItemType =
+  | "image"
+  | "file"
+  | "video"
+  | "audio"
+  | "document"
+  | "folder"
+  | "all";
 
 export interface CardItem {
-  id: string
-  title: string
-  type: ItemType
-  path?: string
-  thumbnail?: string
-  size?: string
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  title: string;
+  type: ItemType;
+  path?: string;
+  thumbnail?: string;
+  size?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Folder extends CardItem {
-  id: string
-  title: string
-  type: ItemType
-  color?: string
-  items: (CardItem | Folder)[]
-  createdAt: Date
-  updatedAt: Date
-  isFolder?: boolean 
+  id: string;
+  title: string;
+  type: ItemType;
+  color?: string;
+  items: (CardItem | Folder)[];
+  createdAt: Date;
+  updatedAt: Date;
+  isFolder?: boolean;
 }
 
 export interface User {

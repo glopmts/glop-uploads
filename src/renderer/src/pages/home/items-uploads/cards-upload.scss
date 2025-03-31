@@ -33,6 +33,13 @@
     color: g.$muted-color;
   }
 
+  &__select-type {
+    width: 39%;
+    margin-bottom: g.$spacing-md;
+    display: flex;
+    gap: g.$spacing-md;
+  }
+
   &__title {
     padding-bottom: g.$spacing-md;
     padding-top: g.$spacing-md;
