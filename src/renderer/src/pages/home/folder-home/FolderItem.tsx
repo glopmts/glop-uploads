@@ -3,6 +3,7 @@ import { useToastNotification } from "@renderer/hooks/useToastNotification";
 import { ServicesFiles } from "@renderer/services/files-uploads";
 import { foldersServices } from "@renderer/services/folders";
 import useFoldersQuery from "@renderer/services/queryGetFolders";
+import UserItemsQuery from "@renderer/services/queryUploads";
 import type { Folder, ItemType } from "@renderer/types/interfaces";
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
 import { File, FileText, Folder as FolderIcon, Image, Music, Video } from "react-feather";
@@ -29,6 +30,7 @@ const getIconByType = (type: ItemType) => {
     video: <Video size={18} />,
     audio: <Music size={18} />,
     document: <FileText size={18} />,
+    all: <FileText size={18} />,
   };
   return icons[type] || <File size={18} />;
 };
@@ -58,6 +60,7 @@ const FolderItem: FC<FolderItemProps> = ({ folder, handleDelete, userId }) => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const { refetch } = useFoldersQuery(userId!);
+  const { refetch: refetchItens } = UserItemsQuery(userId!);
   const [isDragOver, setIsDragOver] = useState(false);
   const folderRef = useRef<HTMLDivElement>(null);
 
@@ -125,7 +128,8 @@ const FolderItem: FC<FolderItemProps> = ({ folder, handleDelete, userId }) => {
       }
 
       toast.success("Upload concluído", "Arquivos enviados com sucesso para a pasta");
-      refetch();
+      await refetch();
+      await refetchItens();
     } catch (error) {
       toast.error("Erro no upload", "Não foi possível enviar os arquivos");
       console.error(error);

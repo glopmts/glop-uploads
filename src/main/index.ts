@@ -38,10 +38,23 @@ function createWindow(): void {
     },
   });
 
-  mainWindow.loadURL("http://localhost:3000");
+  mainWindow.loadURL("http://localhost:5173/");
 
   mainWindow.webContents.once("did-finish-load", () => {
-    autoUpdater.checkForUpdatesAndNotify();
+    if (!is.dev) {
+      autoUpdater.checkForUpdates().catch((error) => {
+        log.error("Erro ao verificar atualizações:", error);
+      });
+
+      setInterval(
+        () => {
+          autoUpdater.checkForUpdates().catch((error) => {
+            log.error("Erro ao verificar atualizações:", error);
+          });
+        },
+        4 * 60 * 60 * 1000
+      );
+    }
   });
 
   autoUpdater.on("update-available", ({ version, releaseNotes }) => {

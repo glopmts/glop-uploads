@@ -8,7 +8,7 @@ import "./itens.scss"
 import { renderItemPreview } from "./render-items"
 
 const FolderId: FC = () => {
-  const { userId } = useAuth()
+  const { userId } = useAuth();
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const id = searchParams.get("id")

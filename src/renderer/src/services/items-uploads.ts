@@ -25,8 +25,8 @@ export const itemUploadsUser = {
         `${API_BASE_URL}/files/userItemsFolder`,
         {
           userId,
-          parentId: folderId,
           type,
+          parentId: folderId,
         }
       );
       return data.data;
