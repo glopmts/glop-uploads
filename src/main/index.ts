@@ -76,6 +76,40 @@ function createWindow(): void {
 }
 
 //janela de segundo plano Wind
+
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+      mainWindow.focus();
+    }
+  });
+
+  app.whenReady().then(() => {
+    createWindow();
+    createTray();
+  });
+
+  app.on("window-all-closed", () => {
+    if (mainWindow) {
+      mainWindow.hide();
+    }
+  });
+
+  app.on("activate", () => {
+    if (mainWindow) {
+      mainWindow.show();
+    } else {
+      createWindow();
+    }
+  });
+}
+
 function createTray() {
   tray = new Tray(iconPath);
 
@@ -141,9 +175,7 @@ autoUpdater.on("update-downloaded", () => {
 
 ipcMain.handle("fetch-data", async () => {
   try {
-    const response = await axios.get(
-      "https://backend-uploads-tbfc.vercel.app/api"
-    );
+    const response = await axios.get("http://localhost:5001/api");
     return response.data;
   } catch (error) {
     log.error("Erro na requisição:", error);
@@ -382,12 +414,3 @@ app.whenReady().then(() => {
 });
 
 // Sair do app quando todas as janelas forem fechadas (exceto no macOS)
-app.on("window-all-closed", () => {
-  if (mainWindow) {
-    mainWindow.hide(); // Apenas oculta a janela
-  }
-});
-
-app.whenReady().then(() => {
-  createTray();
-});

@@ -6,6 +6,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: auto;
 
   &__message {
     color: g.$error-color;
@@ -27,8 +28,9 @@
   &__container {
     display: flex;
     flex-direction: column;
-    height: 100%;
     width: 100%;
+    overflow-y: auto;
+    flex: 1;
     background-color: g.$background-color;
     color: g.$muted-color;
   }
