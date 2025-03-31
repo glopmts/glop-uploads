@@ -146,7 +146,6 @@ export class OptimizedDownloader {
     // Aguardar a conclusão de pelo menos um chunk
     await Promise.race(promises);
 
-    // Continuar com os próximos chunks
     if (this.activeDownloads.has(filename)) {
       this.downloadChunks(url, filePath, filename);
     }
@@ -225,7 +224,6 @@ export class OptimizedDownloader {
         res.on("end", () => {
           fileStream.close(() => {
             if (this.activeDownloads.has(filename)) {
-              // Marcar o chunk como concluído
               chunk.completed = true;
               resolve();
             } else {

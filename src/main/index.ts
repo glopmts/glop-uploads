@@ -246,7 +246,7 @@ ipcMain.handle("check-for-updates", async () => {
   }
 });
 
-//downloads files
+//downloads files (option 1)
 const activeDownloads = new Map<string, { cancel: () => void }>();
 
 const downloadFile = async (url: string, filename: string, id: string) => {
@@ -394,5 +394,3 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
-
-// Sair do app quando todas as janelas forem fechadas (exceto no macOS)

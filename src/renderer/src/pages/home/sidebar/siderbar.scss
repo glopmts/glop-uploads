@@ -178,6 +178,7 @@
 
   &__infor-use {
     position: absolute;
+    animation: scale-fade-in 0.2s cubic-bezier(0.33, 1, 0.68, 1) 0s 1 normal none running;
     background-color: g.$card-bg;
     top: 60%;
     z-index: 900;
@@ -194,6 +195,11 @@
     border-color: g.$border-color;
     border: 1px solid;
     border-radius: g.$border-radius-md * 2;
+  }
+
+  &--closing {
+    animation-name: scale-fade-out;
+    opacity: 0;
   }
 
   &__user-info-user-modal {
@@ -222,5 +228,29 @@
     align-items: end;
     justify-items: end;
     padding-bottom: g.$spacing-sm;
+  }
+}
+
+@keyframes scale-fade-in {
+  0% {
+    opacity: 0;
+    scale: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes scale-fade-out {
+  0% {
+    opacity: 1;
+    scale: 1;
+  }
+
+  100% {
+    opacity: 0;
+    scale: 0.5;
   }
 }

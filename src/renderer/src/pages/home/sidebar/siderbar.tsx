@@ -116,7 +116,7 @@ const Sidebar = () => {
 
       </aside>
       {isProfile && (
-        <div className="sidebar__infor-use" ref={modalRef}>
+        <div className={cn("sidebar__infor-use")} ref={modalRef}>
           <div className="sidebar__user-info-user-modal">
             {user?.image ? (
               <img src={user.image} className="sidebar__user-image" />

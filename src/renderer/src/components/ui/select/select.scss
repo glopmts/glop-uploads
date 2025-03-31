@@ -22,7 +22,7 @@
     padding: 0.75rem 1rem;
     background-color: g.$card-bg;
     border: 1px solid #373838;
-    border-radius: 0.375rem;
+    border-radius: g.$border-radius-lg * 7;
     cursor: pointer;
     transition: all 0.2s ease;
     
