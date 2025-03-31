@@ -38,6 +38,8 @@ function createWindow(): void {
     },
   });
 
+  mainWindow.loadURL("http://localhost:3000");
+
   mainWindow.webContents.once("did-finish-load", () => {
     autoUpdater.checkForUpdatesAndNotify();
   });
@@ -139,7 +141,9 @@ autoUpdater.on("update-downloaded", () => {
 
 ipcMain.handle("fetch-data", async () => {
   try {
-    const response = await axios.get("http://localhost:5001/api");
+    const response = await axios.get(
+      "https://backend-uploads-tbfc.vercel.app/api"
+    );
     return response.data;
   } catch (error) {
     log.error("Erro na requisição:", error);
