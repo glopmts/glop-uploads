@@ -1,7 +1,10 @@
+"use client"
+
 import type React from "react"
 
 import ItemViewer from "@renderer/components/folders/ItemViewer/ItemViewer"
-import { Select, SelectOption } from "@renderer/components/ui/select/select"
+import { Select, type SelectOption } from "@renderer/components/ui/select/select"
+import { useDownloadStore } from "@renderer/hooks/download-store"
 import { useAuth } from "@renderer/hooks/useAuth"
 import { useToastNotification } from "@renderer/hooks/useToastNotification"
 import { renderItemPreview } from "@renderer/pages/folder/render-items"
@@ -10,7 +13,7 @@ import UserItemsQuery from "@renderer/services/queryUploads"
 import type { CardItem, ItemType } from "@renderer/types/interfaces"
 import { motion } from "framer-motion"
 import { useState, type FC } from "react"
-import { RefreshCcw } from "react-feather"
+import { Download, RefreshCcw } from "react-feather"
 import MenuItems from "../../../components/folders/items/modal-items/menu-items"
 import { LoadingSpinner } from "../../../components/ui/loading-spinner/loading-spinner"
 import "./cards-upload.scss"
@@ -19,13 +22,14 @@ const CardsUpload: FC = () => {
   const { userId } = useAuth()
   const toast = useToastNotification()
   const { data: items = [], isLoading, refetch, error } = UserItemsQuery(userId!)
+  const { getDownloadsForItem } = useDownloadStore()
 
   const [selectedItem, setSelectedItem] = useState<CardItem | null>(null)
   const [isRefetch, setRefecth] = useState(false)
   const [sectionContextMenu, setSectionContextMenu] = useState<{ x: number; y: number } | null>(null)
   const [contextMenuFolderId, setContextMenuFolderId] = useState<string | null>(null)
   const [selectType, setSelectType] = useState<ItemType | null>("all")
-  const [dateFilter, setDateFilter] = useState<string>("all");
+  const [dateFilter, setDateFilter] = useState<string>("all")
 
   const options: SelectOption[] = [
     { value: "all", label: "Todos" },
@@ -41,42 +45,39 @@ const CardsUpload: FC = () => {
     { value: "today", label: "Hoje" },
     { value: "week", label: "Últimos 7 dias" },
     { value: "month", label: "Últimos 30 dias" },
-  ];
-
+  ]
 
   const handleChange = (value: string) => {
-    const selectedType = value as ItemType;
-    setSelectType(selectedType);
-  };
+    const selectedType = value as ItemType
+    setSelectType(selectedType)
+  }
 
   const handleDateChange = (value: string) => {
-    const dateFilter = value;
-    setDateFilter(dateFilter);
-  };
-
+    const dateFilter = value
+    setDateFilter(dateFilter)
+  }
 
   const filteredItems = items.filter((item) => {
-    const itemDate = new Date(item.createdAt);
-    const now = new Date();
+    const itemDate = new Date(item.createdAt)
+    const now = new Date()
 
-    const matchesType = selectType === "all" || item.type === selectType;
+    const matchesType = selectType === "all" || item.type === selectType
 
-    let matchesDate = true;
+    let matchesDate = true
     if (dateFilter === "today") {
-      matchesDate = itemDate.toDateString() === now.toDateString();
+      matchesDate = itemDate.toDateString() === now.toDateString()
     } else if (dateFilter === "week") {
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(now.getDate() - 7);
-      matchesDate = itemDate >= oneWeekAgo;
+      const oneWeekAgo = new Date()
+      oneWeekAgo.setDate(now.getDate() - 7)
+      matchesDate = itemDate >= oneWeekAgo
     } else if (dateFilter === "month") {
-      const oneMonthAgo = new Date();
-      oneMonthAgo.setMonth(now.getMonth() - 1);
-      matchesDate = itemDate >= oneMonthAgo;
+      const oneMonthAgo = new Date()
+      oneMonthAgo.setMonth(now.getMonth() - 1)
+      matchesDate = itemDate >= oneMonthAgo
     }
 
-    return matchesType && matchesDate;
-  });
-
+    return matchesType && matchesDate
+  })
 
   const handleFolderContextMenu = (e: React.MouseEvent, folderId: string) => {
     e.preventDefault()
@@ -168,7 +169,8 @@ const CardsUpload: FC = () => {
             disabled={false}
             onChange={handleChange}
             value={selectType || "all"}
-            placeholder="Selecione tipo" />
+            placeholder="Selecione tipo"
+          />
           <Select
             options={dateOptions}
             disabled={false}
@@ -181,24 +183,37 @@ const CardsUpload: FC = () => {
       <div className="files__cards">
         {filteredItems.length > 0 ? (
           <ul className="itens-id__ul">
-            {filteredItems.map((item) => (
-              <li
-                key={item.id}
-                className="itens-id__card"
-                tabIndex={0}
-                role="button"
-                onContextMenu={(e) => handleFolderContextMenu(e, item.id)}
-                onClick={() => handleItemClick(item)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    handleItemClick(item)
-                  }
-                }}
-                aria-label={`Item ${item.title}`}
-              >
-                {renderItemPreview(item)}
-              </li>
-            ))}
+            {filteredItems.map((item) => {
+              // Verificar se há downloads ativos para este item
+              const itemDownloads = getDownloadsForItem(item.id)
+              const hasActiveDownload = itemDownloads.some((d) => d.status === "downloading")
+
+              return (
+                <li
+                  key={item.id}
+                  className={`itens-id__card ${hasActiveDownload ? "itens-id__card--downloading" : ""}`}
+                  tabIndex={0}
+                  role="button"
+                  onContextMenu={(e) => handleFolderContextMenu(e, item.id)}
+                  onClick={() => handleItemClick(item)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      handleItemClick(item)
+                    }
+                  }}
+                  aria-label={`Item ${item.title}`}
+                >
+                  {renderItemPreview(item)}
+                  {hasActiveDownload && (
+                    <div className="itens-id__download-indicator">
+                      <div className="download-indicator__icon">
+                        <Download size={16} />
+                      </div>
+                    </div>
+                  )}
+                </li>
+              )
+            })}
           </ul>
         ) : (
           <div className="itens-id__not-found">

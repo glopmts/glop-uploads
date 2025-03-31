@@ -22,6 +22,36 @@ contextBridge.exposeInMainWorld("electronAPI", {
     return () => ipcRenderer.removeAllListeners("download-progress");
   },
 
+  startOptimizedDownload: (url: string, filename: string, folder: string) => {
+    try {
+      new URL(url);
+      return ipcRenderer.send("start-optimized-download", {
+        url,
+        filename,
+        folder,
+      });
+    } catch {
+      throw new Error(`URL inválida: ${url}`);
+    }
+  },
+
+  onOptimizedDownloadProgress: (
+    callback: (data: {
+      filename: string;
+      progress: number;
+      speed: number;
+    }) => void
+  ) => {
+    const listener = (
+      _event: Electron.IpcRendererEvent,
+      data: { filename: string; progress: number; speed: number }
+    ) => callback(data);
+    ipcRenderer.on("optimized-download-progress", listener);
+    return () => {
+      ipcRenderer.removeListener("optimized-download-progress", listener);
+    };
+  },
+
   cancelDownload: (id: string) => ipcRenderer.send("cancel-download", id),
 
   sendNotification: (title: string, body: string) =>

@@ -16,9 +16,11 @@ import { autoUpdater } from "electron-updater";
 import * as fs from "fs";
 import * as https from "https";
 import path, { join } from "path";
+import { OptimizedDownloader } from "./optimized-downloader";
 
 let mainWindow: BrowserWindow | null = null;
 let tray: Tray | null = null;
+let optimizedDownloader: OptimizedDownloader;
 
 const iconPath = join(__dirname, "../../resources/icon.png");
 
@@ -37,6 +39,9 @@ function createWindow(): void {
       contextIsolation: true,
     },
   });
+
+  optimizedDownloader = new OptimizedDownloader();
+  optimizedDownloader.setMainWindow(mainWindow);
 
   mainWindow.loadURL("http://localhost:5173/");
 
@@ -267,11 +272,12 @@ const downloadFile = async (url: string, filename: string, id: string) => {
         Connection: "keep-alive",
         "Accept-Encoding": "gzip, deflate, br",
       },
-      maxContentLength: Infinity,
-      maxBodyLength: Infinity,
+      maxContentLength: Number.POSITIVE_INFINITY,
+      maxBodyLength: Number.POSITIVE_INFINITY,
     });
 
-    const totalLength = parseInt(response.headers["content-length"]) || 0;
+    const totalLength =
+      Number.parseInt(response.headers["content-length"]) || 0;
     let downloaded = 0;
     let lastProgressUpdate = 0;
     const updateInterval = 100;
@@ -303,71 +309,6 @@ const downloadFile = async (url: string, filename: string, id: string) => {
         reject(err);
       });
     });
-  } catch (error) {
-    activeDownloads.delete(id);
-    throw error;
-  }
-};
-
-const downloadChunked = async (
-  url: string,
-  filename: string,
-  id: string,
-  chunkSize = 5242880
-) => {
-  try {
-    const destPath = path.join(app.getPath("downloads"), filename);
-    const writer = fs.createWriteStream(destPath);
-
-    const headResponse = await axios.head(url);
-    const totalLength = parseInt(headResponse.headers["content-length"]) || 0;
-
-    if (totalLength === 0) {
-      throw new Error("Não foi possível determinar o tamanho do arquivo");
-    }
-
-    const chunks = Math.ceil(totalLength / chunkSize);
-    let downloaded = 0;
-
-    for (let i = 0; i < chunks; i++) {
-      if (activeDownloads.has(id)) {
-        const start = i * chunkSize;
-        const end = Math.min((i + 1) * chunkSize - 1, totalLength - 1);
-
-        const response = await axios({
-          url,
-          method: "GET",
-          responseType: "stream",
-          headers: {
-            Range: `bytes=${start}-${end}`,
-            Connection: "keep-alive",
-          },
-          cancelToken: new axios.CancelToken((c) => {
-            activeDownloads.set(id, { cancel: c });
-          }),
-        });
-
-        await new Promise((resolve, reject) => {
-          response.data.on("data", (chunk: Buffer) => {
-            downloaded += chunk.length;
-            const progress = downloaded / totalLength;
-            mainWindow?.webContents.send("download-progress", { id, progress });
-          });
-
-          response.data.pipe(writer, { end: false });
-
-          response.data.on("end", resolve);
-          response.data.on("error", reject);
-        });
-      } else {
-        throw new Error("Download cancelado");
-      }
-    }
-
-    writer.end();
-    activeDownloads.delete(id);
-    mainWindow?.webContents.send("download-progress", { id, progress: 1 });
-    return destPath;
   } catch (error) {
     activeDownloads.delete(id);
     throw error;
@@ -406,10 +347,6 @@ ipcMain.on("start-download", async (_event, { url, folder }) => {
       }
     });
   });
-});
-
-ipcMain.handle("download-chunked", (_event, url, filename, id, chunkSize) => {
-  return downloadChunked(url, filename, id, chunkSize);
 });
 
 ipcMain.handle("download-file", (_event, url, filename, id) => {

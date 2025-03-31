@@ -254,7 +254,7 @@ const NewsUploadFiles: FC = () => {
               </Button>
               <Button
                 theme="primary"
-                disabled={isUploading || selectedFiles.length === 0 || !title}
+                disabled={isUploading || selectedFiles.length === 0}
                 onClick={handleSubmit}
               >
                 {isUploading ? (

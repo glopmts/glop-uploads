@@ -1,4 +1,5 @@
 import { DownloadIcon } from "@primer/octicons-react";
+import { useDownloadStore } from "@renderer/hooks/download-store";
 import { useToastNotification } from "@renderer/hooks/useToastNotification";
 import { type FC, useEffect, useRef, useState } from "react";
 import { Copy, Download, StopCircle, X } from "react-feather";
@@ -17,8 +18,18 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
   const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const toast = useToastNotification();
-  const [downloads, setDownloads] = useState<{ id: string; progress: number }[]>([]);
   const [coppy, setCoppy] = useState(false);
+
+  const {
+    downloads,
+    addDownload,
+    updateDownload,
+    removeDownload,
+    getDownloadsForItem
+  } = useDownloadStore();
+
+  const itemDownloads = item ? getDownloadsForItem(item.id) : [];
+  const currentDownload = itemDownloads.length > 0 ? itemDownloads[0] : null;
 
   useEffect(() => {
     setIsLoading(true);
@@ -31,13 +42,31 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
 
   useEffect(() => {
     const unsubscribe = window.electronAPI.onDownloadProgress(({ id, progress }) => {
-      setDownloads((prev) =>
-        prev.map((d) => (d.id === id ? { ...d, progress } : d))
-      );
+      updateDownload(id, { progress });
+
+      if (progress >= 1) {
+        updateDownload(id, { status: 'completed' });
+      }
     });
 
-    return () => unsubscribe();
-  }, []);
+    const unsubscribeOptimized = window.electronAPI.onOptimizedDownloadProgress(
+      (filename, progress, speed, completed, canceled) => {
+        console.log("Download em progresso:", { filename, progress, speed, completed, canceled });
+
+        if (completed) {
+          toast.success(`Download concluído: ${filename}`);
+        }
+        if (canceled) {
+          toast.warning(`Download cancelado: ${filename}`);
+        }
+      }
+    );
+
+    return () => {
+      unsubscribe();
+      unsubscribeOptimized();
+    };
+  }, [downloads, toast, updateDownload]);
 
   if (!item) return null;
 
@@ -52,23 +81,76 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
 
     const downloadId = Math.random().toString(36).substring(7);
 
-    setDownloads((prev) => [...prev, { id: downloadId, progress: 0 }]);
+    // Adicionar ao store global
+    addDownload({
+      id: downloadId,
+      progress: 0,
+      filename: item.title || "downloaded_file",
+      itemId: item.id,
+      status: 'downloading'
+    });
 
     try {
       await window.electronAPI.downloadFile(item.path, item.title || "downloaded_file", downloadId);
     } catch {
-      setDownloads((prev) => prev.filter((d) => d.id !== downloadId));
+      removeDownload(downloadId);
       toast.error("Erro ao iniciar o download");
     }
   };
 
   const handleCancelDownload = (id: string) => {
     window.electronAPI.cancelDownload(id);
-    setDownloads((prev) => prev.filter((d) => d.id !== id));
+    updateDownload(id, { status: 'canceled', progress: 0 });
   };
 
-  const handleDownload2 = () => {
-    // Implementação alternativa de download
+  const isValidUrl = (url: string) => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleDownload2 = async () => {
+    if (!item?.path) {
+      toast.error("O caminho do arquivo não está definido.");
+      return;
+    }
+
+    if (!isValidUrl(item.path)) {
+      toast.error(`URL inválida: ${item.path}`);
+      console.error(`URL inválida tentando iniciar download: ${item.path}`);
+      return;
+    }
+
+    try {
+      const folder = await window.electronAPI.selectDownloadFolder();
+      if (!folder) return;
+
+      const downloadId = Math.random().toString(36).substring(7);
+
+      // Adicionar ao store global
+      addDownload({
+        id: downloadId,
+        progress: 0,
+        filename: item.title || "downloaded_file",
+        itemId: item.id,
+        status: 'downloading'
+      });
+
+      await window.electronAPI.startOptimizedDownload(
+        item.path,
+        item.title || "downloaded_file",
+        folder
+      );
+
+      toast.success("Download alternativo iniciado");
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      toast.error(`Erro ao iniciar o download alternativo: ${errorMessage}`);
+      console.error("Erro no download alternativo:", error);
+    }
   };
 
   const handleCopy = () => {
@@ -84,8 +166,6 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
         toast.error("Erro ao copiar a URL");
       });
   };
-
-  const currentDownload = downloads.length > 0 ? downloads[downloads.length - 1] : null;
 
   return (
     <div
@@ -115,7 +195,7 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
             </span>
           </div>
           <div className="download-button">
-            {currentDownload ? (
+            {currentDownload && currentDownload.status === 'downloading' ? (
               <>
                 <div className="download-progress">
                   <div className="progress-bar">
@@ -126,6 +206,7 @@ const ItemViewer: FC<ItemViewerProps> = ({ item, onClose }) => {
                   </div>
                   <span className="progress-text">
                     {Math.round(currentDownload.progress * 100)}%
+                    {currentDownload.speed && ` - ${(currentDownload.speed / 1024 / 1024).toFixed(1)} MB/s`}
                   </span>
                 </div>
                 <Button
