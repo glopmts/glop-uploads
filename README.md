@@ -1,5 +1,9 @@
 # File Upload Application
 
+<div align="center">
+ ![Hydra Catalogue](./docs/screen-home.png)
+<div>
+
 A cross-platform desktop application for file uploads built with Electron, React, TypeScript, and AWS S3 integration.
 
 ## Features
