@@ -173,6 +173,7 @@ function createTray() {
   const contextMenu = Menu.buildFromTemplate([
     {
       label: "Mostrar",
+      toolTip: "Abrir app GlopUploads",
       click: () => {
         if (mainWindow) {
           mainWindow.show();

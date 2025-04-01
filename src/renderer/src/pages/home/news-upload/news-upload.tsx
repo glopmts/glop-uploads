@@ -83,7 +83,7 @@ const NewsUploadFiles: FC = () => {
   }
 
   const handleSubmit = async () => {
-    if (!userId || !title || selectedFiles.length === 0) {
+    if (!userId || selectedFiles.length === 0) {
       return;
     }
 
