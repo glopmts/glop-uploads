@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 
 import ItemViewer from "@renderer/components/folders/ItemViewer/ItemViewer"
