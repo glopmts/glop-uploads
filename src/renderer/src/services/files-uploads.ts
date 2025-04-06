@@ -1,5 +1,5 @@
 import axios, { type AxiosError, type AxiosRequestConfig } from "axios";
-import { API_BASE_URL, API_FILES_URL, TOKE_API } from "../lib/api_url";
+import { API_BASE_URL, API_FILES_URL } from "../lib/api_url";
 import type { ItemType } from "../types/interfaces";
 
 interface ErrorResponse {
@@ -34,7 +34,6 @@ export const ServicesFiles = {
       const config: AxiosRequestConfig = {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${TOKE_API}`,
         },
         onUploadProgress: (progressEvent) => {
           if (onProgress && progressEvent.total) {
@@ -79,7 +78,6 @@ export const ServicesFiles = {
       const config: AxiosRequestConfig = {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${TOKE_API}`,
         },
         onUploadProgress: (progressEvent) => {
           if (onProgress && progressEvent.total) {

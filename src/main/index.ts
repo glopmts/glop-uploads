@@ -210,7 +210,9 @@ function createTray() {
 
 ipcMain.handle("fetch-data", async () => {
   try {
-    const response = await axios.get("http://localhost:5001/api");
+    const response = await axios.get(
+      "https://backend-uploads-git-main-gopmts-projects.vercel.app/api"
+    );
     return response.data;
   } catch (error) {
     log.error("Erro na requisição:", error);

@@ -35,7 +35,7 @@ export const renderContent = ({
             controls
             autoPlay={false}
             onLoadedData={() => setIsLoading(false)}
-            style={{ display: isLoading ? "none" : "block" }}
+            style={{ display: isLoading ? "none" : "block", width: "90%" }}
           >
             <source src={item.path} type="video/mp4" />
             Your browser does not support the video tag.
