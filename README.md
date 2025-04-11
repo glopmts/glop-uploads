@@ -44,7 +44,7 @@ Clone the repository and install dependencies:
 
 ```bash
 # Clone the repository
-git clone https://github.com/glopmts/nildedit.git
+git clone https://github.com/glopmts/glop-uploads.git
 
 # Navigate to project directory
 cd file-upload-app
